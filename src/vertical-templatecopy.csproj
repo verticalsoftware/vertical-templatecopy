@@ -6,22 +6,17 @@
     <RootNamespace />
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>t4copy</ToolCommandName>
-    <PackageOutputPath>./nupkg</PackageOutputPath>
     <PackageId>vertical-templatecopy</PackageId>
     <PackageVersion>1.0.0-DEV-001</PackageVersion>
     <PackageTags>commandline;utilities</PackageTags>
-    <PackageProjectUrl>https://github.com/verticalsoftware/vertical-commandline</PackageProjectUrl>
-    <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
-    <PackageIconUrl>https://github.com/verticalsoftware/vertical-commandline/raw/master/assets/package-logo.png</PackageIconUrl>
+    <PackageProjectUrl>https://github.com/verticalsoftware/vertical-templatecopy</PackageProjectUrl>
+    <PackageLicense>https://opensource.org/licenses/MIT</PackageLicense>
+    <PackageIcon>logo.png</PackageIcon>
     <RepositoryType>git</RepositoryType>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <Title>vertical-templatecopy</Title>
     <Copyright>Copyright (C) 2019 Vertical Software</Copyright>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="Vertical\TemplateCopy\help.txt" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="microsoft.extensions.dependencyinjection" Version="3.0.0" />
@@ -34,6 +29,10 @@
     <Content Include="Resources\help.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="../logo.png" Pack="true" PackagePath="/" />
   </ItemGroup>
 
 </Project>
