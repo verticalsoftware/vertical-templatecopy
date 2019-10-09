@@ -1,0 +1,47 @@
+﻿t4copy - A program that creates files and folders according to a structured template.
+
+USAGE
+
+	t4copy.exe [OPTIONS]
+
+DESCRIPTION
+
+	t4copy creates a directory structure with files that are based off of a template. At its core, it copies the files and folder structure from a directory that serves as a template that contains files and child structures. Along with copying the assets, it is capable of performing substitutions using command line variables or expansion via macros.
+
+OPTIONS
+
+	-a | --arg-pattern
+
+		A regular expression that matches user provided variable expansions in template files. Defaults to a pattern that matches strings like $(<key>), where <key> is a capture group that extracts the variable name.
+
+	--clean-and-overwrite
+		
+		A purposely long switch that indicates the output directory should be emptied (recusively) if it contains any items. The program will not copy a template to the output directory unless it is empty, unless this switch is specified.
+		** WARNING: If you invoke this switch, the contents of the directory will be unrecoverably deleted.
+
+	-e | --env-pattern <PATTERN>
+
+		A regular expression that matches environment variable expansions in template files. Defaults to a pattern that matches strings like $(env:<key>), where <key> is a capture group that extracts the environment variable name.
+
+	-l | --logger <LEVEL>
+
+		Logger verbosity level. Specify [v]erbose, [d]ebug, [[i]nfo]rmation, or [q]uiet - defaults to info.
+
+	-m | --macro-pattern <PATTERN>
+
+		A regular expression that matches macro expansions in template files. Defaults to a pattern that matches strings like $(@<fn>(<arg>)), where <fn> and <arg> are named capture groups that extract the macro name and argument value, respectively.
+
+	-o | --output <PATH>
+
+		The directory that serves as the root of the output.
+
+	-t | --template <PATH>
+
+		The path to the template structure.	
+
+	-v | --var <KEY=VALUE> [...]
+
+		Passes along a key/value pair to the process variables collection.
+		KEY   - The key to associate the variable value to
+		VALUE - The variable value
+		Example: t4copy -v threads=2 -v maxMemory=2GB -v path=\Program Files\
