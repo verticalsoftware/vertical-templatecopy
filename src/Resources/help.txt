@@ -2,7 +2,7 @@
 
 USAGE
 
-	t4copy.exe [OPTIONS]
+	t4copy [OPTIONS]
 
 DESCRIPTION
 
@@ -13,11 +13,6 @@ OPTIONS
 	-a | --arg-pattern
 
 		A regular expression that matches user provided variable expansions in template files. Defaults to a pattern that matches strings like $(<key>), where <key> is a capture group that extracts the variable name.
-
-	--clean-and-overwrite
-		
-		A purposely long switch that indicates the output directory should be emptied (recusively) if it contains any items. The program will not copy a template to the output directory unless it is empty, unless this switch is specified.
-		** WARNING: If you invoke this switch, the contents of the directory will be unrecoverably deleted.
 
 	-e | --env-pattern <PATTERN>
 
@@ -35,6 +30,10 @@ OPTIONS
 
 		The directory that serves as the root of the output.
 
+	--overwrite
+		
+		Overwrite files if they already exist. The process will display warnings for this.
+
 	-t | --template <PATH>
 
 		The path to the template structure.	
@@ -44,4 +43,97 @@ OPTIONS
 		Passes along a key/value pair to the process variables collection.
 		KEY   - The key to associate the variable value to
 		VALUE - The variable value
-		Example: t4copy -v threads=2 -v maxMemory=2GB -v path=\Program Files\
+		Example: t4copy -v threads=2 -v maxMemory=2GB -v path="Program Files"
+
+REMARKS
+
+	t4copy makes it easy to set up skeleton directory structures that are smarter than ctrl+c > ctrl+v. A typical scenario for using this tool is creating new dotnet projects that have a core set of dependencies, an established directory strucutre, source and unit test projects, and some boilerplate code. You could copy/paste a directory structure but what about naming the directories in the new folder? What about the boilerplate code being located in the correct namespaces for the project? This is what t4copy can solve.
+
+	To use t4copy, first create a template folder that contains the directory structure and files required for the template. Then modify the files, file names, and directory names with variables substitution templates. Then invoke the t4copy utility on the command line, specify the template directory, the target directory, and the variables values that will take the place of the substitution placeholders you have placed in the files. t4copy then copies the directory structure and processes the text files with your variable substitutions.
+
+	A simple example, consider the following directory structure with the following file names:
+
+	/templates/lib
+	   /$(project)
+	       $(project).csproj
+		   /$(@expandDotToPath($(project)))
+		      Class1.cs
+
+	Imagine Class1.cs has the following content:
+
+	using System;
+
+	namespace $(project)
+	{
+		public class Class1
+		{			
+		}
+	}
+
+	If we were to execute: t4copy -o /dev -t /templates/lib -v project=Vertical.CommandLine, we would get the following directory:
+
+	/dev
+	  /Vertical.CommandLine
+	     Vertical.CommandLine.csproj
+		 /Vertical
+		    /CommandLine
+			   Class1.cs
+
+	... and Class1.cs would read:
+
+	using System;
+
+	namespace Vertical.CommandLine
+	{
+		public class Class1
+		{
+		}
+	}
+
+	Have fun.
+
+BUILT-IN MACROS
+
+	The following macros come out-of-the-box with the installation of t4copy:
+
+		currentDirectory()
+			Returns the current working directory.
+
+		expandDotToPath()
+			Converts the given identifier delimited by dots to a path. E.g. Vertical.TemplateCopy becomes Vertical/TemplateCopy.
+
+		machineName()
+			Returns the machine name.
+
+		now([FORMAT])
+			Returns the system date, optionally formatting the value using [format].
+
+		outputDirectory()
+			Returns the output directory specified in options.
+
+
+
+		specialFolder([FOLDER])
+			Returns the path to an environment special folder. See https://docs.microsoft.com/en-us/dotnet/api/system.environment.specialfolder?view=netframework-4.8 for values.
+
+		systemDirectory()
+			Returns the system directory.
+
+		targetContext()
+			Gets the current template context (path of the file or directory asset currently being copied).
+
+		templateContext()
+			Gets the current template context (path of the file or directory asset currently being copied).
+
+		templateDirectory()
+			Returns the template directory specified in options.
+
+		userDomainName()
+			Returns the current user network or domain ID.
+
+		userName()
+			Returns the current user name.
+
+		utcNow([FORMAT])
+			Returns the system date in UTC, optionally formatting the value using [format].
+			

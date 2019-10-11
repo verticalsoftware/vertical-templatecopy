@@ -251,7 +251,8 @@ _TeamCity*
 
 *.coveragexml
 
-
+# Coverlet
+.coverage
 
 # NCrunch
 

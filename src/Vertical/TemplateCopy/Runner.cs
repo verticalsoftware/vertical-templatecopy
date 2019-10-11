@@ -1,9 +1,15 @@
-﻿using Microsoft.Extensions.Logging;
+﻿// Copyright(c) 2019 Vertical Software - All rights reserved
+//
+// This code file has been made available under the terms of the
+// MIT license. Please refer to LICENSE.txt in the root directory
+// or refer to https://opensource.org/licenses/MIT
+
+using Microsoft.Extensions.Logging;
 using Serilog.Context;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Vertical.TemplateCopy.Steps;
+using Vertical.TemplateCopy.Abstractions;
 
 namespace Vertical.TemplateCopy
 {
@@ -13,18 +19,18 @@ namespace Vertical.TemplateCopy
     public class Runner
     {
         private readonly IRunStep[] runSteps;
-        private readonly AddOnStepCollection addOnStepCollection;
+        private readonly IAddOnStepsRunner addOnStepRunner;
         private readonly ILogger<Runner> logger;
 
         /// <summary>
         /// Creates a new instance of this type.
         /// </summary>
         public Runner(IEnumerable<IRunStep> runSteps
-            , AddOnStepCollection addOnStepCollection
+            , IAddOnStepsRunner addOnStepRunner
             , ILogger<Runner> logger)
         {
             this.runSteps = runSteps.ToArray();
-            this.addOnStepCollection = addOnStepCollection;
+            this.addOnStepRunner = addOnStepRunner;
             this.logger = logger;
         }
 
@@ -39,26 +45,18 @@ namespace Vertical.TemplateCopy
                 {
                     RunStep(step);
                 }
-                ExecuteAddOnSteps(() => addOnStepCollection.FinalizeSteps.Any()
-                    ? addOnStepCollection.FinalizeSteps.Dequeue()
-                    : null);
+
+                addOnStepRunner.RunFinalizeSteps();
             }
             catch (AbortException)
             {
-                logger.LogError("Abort occurred, begin rollback");
-                ExecuteAddOnSteps(() => addOnStepCollection.RollbackSteps.Any()
-                    ? addOnStepCollection.RollbackSteps.Pop()
-                    : null);
+                logger.LogError("Process aborted");
+                addOnStepRunner.RunRollbackSteps();
             }
-        }        
-
-        private void ExecuteAddOnSteps(Func<IRunStep> provider)
-        {
-            IRunStep step;
-
-            while((step = provider()) != null)
+            catch (Exception ex)
             {
-                RunStep(step);
+                logger.LogError("Execption occurred: {ex}, begin rollback", ex);
+                addOnStepRunner.RunRollbackSteps();
             }
         }
 

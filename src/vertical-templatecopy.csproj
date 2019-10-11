@@ -7,7 +7,7 @@
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>t4copy</ToolCommandName>
     <PackageId>vertical-templatecopy</PackageId>
-    <PackageVersion>1.0.0-DEV-001</PackageVersion>
+    <PackageVersion>1.0.0</PackageVersion>
     <PackageTags>commandline;utilities</PackageTags>
     <PackageProjectUrl>https://github.com/verticalsoftware/vertical-templatecopy</PackageProjectUrl>
     <PackageLicense>https://opensource.org/licenses/MIT</PackageLicense>
@@ -16,13 +16,16 @@
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <Title>vertical-templatecopy</Title>
     <Copyright>Copyright (C) 2019 Vertical Software</Copyright>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="dawn.guard" Version="1.9.0" />
     <PackageReference Include="microsoft.extensions.dependencyinjection" Version="3.0.0" />
     <PackageReference Include="serilog.extensions.logging" Version="3.0.1" />
     <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
-    <PackageReference Include="vertical-commandline" Version="1.0.0" />
+    <PackageReference Include="system.io.abstractions" Version="7.0.4" />
+    <PackageReference Include="vertical-commandline" Version="1.0.2" />
   </ItemGroup>
 
   <ItemGroup>

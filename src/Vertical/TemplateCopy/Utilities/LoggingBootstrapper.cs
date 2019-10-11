@@ -1,16 +1,24 @@
-﻿using Serilog;
-using Serilog.Core;
+﻿// Copyright(c) 2019 Vertical Software - All rights reserved
+//
+// This code file has been made available under the terms of the
+// MIT license. Please refer to LICENSE.txt in the root directory
+// or refer to https://opensource.org/licenses/MIT
+
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Serilog;
+using Serilog.Core;
 using Vertical.TemplateCopy.Configuration;
 using MSLogger = Microsoft.Extensions.Logging.ILogger;
 using MSLoggerEx = Microsoft.Extensions.Logging.LoggerExtensions;
 
-namespace Vertical.TemplateCopy
+namespace Vertical.TemplateCopy.Utilities
 {
     /// <summary>
     /// Manages creation of the logger.
     /// </summary>
-    public static class Logging
+    [ExcludeFromCodeCoverage]
+    public static class LoggingBootstrapper
     {
         /// <summary>
         /// Creates the root logger.
@@ -21,7 +29,7 @@ namespace Vertical.TemplateCopy
         {
             var configuration = new LoggerConfiguration()
                 .MinimumLevel.Is(options.LoggerLevel)
-                .WriteTo.Console(options.LoggerLevel, outputTemplate: "[{Level:u3}] {step}{substep}{Message:lj}{NewLine}{Exception}")
+                .WriteTo.Console(options.LoggerLevel, outputTemplate: LoggingConstants.OutputTemplate)
                 .Enrich.FromLogContext();
 
             return configuration.CreateLogger();

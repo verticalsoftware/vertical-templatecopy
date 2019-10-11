@@ -1,10 +1,17 @@
-﻿using Serilog.Events;
+﻿// Copyright(c) 2018-2019 Vertical Software - All rights reserved
+//
+// This code file has been made available under the terms of the
+// MIT license. Please refer to LICENSE.txt in the root directory
+// or refer to https://opensource.org/licenses/MIT
+
+using Serilog.Events;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using Vertical.CommandLine;
 using Vertical.CommandLine.Configuration;
 using Vertical.CommandLine.Help;
+using static Dawn.Guard;
 
 namespace Vertical.TemplateCopy.Configuration
 {
@@ -33,7 +40,9 @@ namespace Vertical.TemplateCopy.Configuration
         /// <param name="handler">Handler</param>
         public OptionsConfiguration(Action<Options> handler)
         {
-            Switch("--clean-and-overwrite", arg => arg.Map.ToProperty(opt => opt.CleanOverwrite));
+            Argument(handler, nameof(handler)).NotNull();
+
+            Switch("--overwrite", arg => arg.Map.ToProperty(opt => opt.CleanOverwrite));
             
             Option("-l|--logger", arg => arg.Map.Using(MapLogEventLevel));
             Option("-o|--output", arg => arg.Map.Using((opt, value) => opt.OutputPath = MapFullPath(value)));
@@ -52,6 +61,9 @@ namespace Vertical.TemplateCopy.Configuration
             OnExecute(handler);
         }
 
+        /// <summary>
+        /// Maps a full path.
+        /// </summary>
         private string MapFullPath(string path)
         {
             try
@@ -60,19 +72,28 @@ namespace Vertical.TemplateCopy.Configuration
             }
             catch (Exception ex)
             {
-                throw new UsageException($"Could not expand given path '{path}' - {ex.Message}");
+                throw new UsageException($"Invalid path '{path}' - {ex.Message}");
             }
         }
 
+        /// <summary>
+        /// Maps a log level.
+        /// </summary>
         private void MapLogEventLevel(Options opt, string value)
         {
-            try { opt.LoggerLevel = LogEventLevelMap[value]; }
+            try 
+            { 
+                opt.LoggerLevel = LogEventLevelMap[value]; 
+            }
             catch (KeyNotFoundException)
             {
                 throw new UsageException($"Invalid logging verbosity level '{value}'");
             }
         }
 
+        /// <summary>
+        /// Maps a variable
+        /// </summary>
         private void MapVariable(Options opt, string value)
         {
             var split = value.Split('=');

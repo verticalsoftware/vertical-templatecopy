@@ -1,4 +1,11 @@
-﻿using Microsoft.Extensions.Logging;
+﻿// Copyright(c) 2019 Vertical Software - All rights reserved
+//
+// This code file has been made available under the terms of the
+// MIT license. Please refer to LICENSE.txt in the root directory
+// or refer to https://opensource.org/licenses/MIT
+
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.Logging;
 using System.Linq;
 using Vertical.TemplateCopy.Configuration;
 
@@ -7,6 +14,7 @@ namespace Vertical.TemplateCopy.Steps
     /// <summary>
     /// Dump configuration step (logs to debug)
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class DumpConfigurationStep : RunStep
     {
         private readonly Options options;
@@ -22,6 +30,9 @@ namespace Vertical.TemplateCopy.Steps
             this.options = options;
         }
 
+        /// <summary>
+        /// Executes the steps
+        /// </summary>
         public override void Run()
         {
             var values = new (string, object)[]
@@ -40,7 +51,7 @@ namespace Vertical.TemplateCopy.Steps
             foreach(var item in values)
             {
                 var key = string.Format($"{{0,{maxLength}}}", item.Item1);
-                Logger.LogDebug("{key}:{value}", key, item.Item2);
+                Logger.LogTrace("{key}:{value}", key, item.Item2);
             }
         }
     }

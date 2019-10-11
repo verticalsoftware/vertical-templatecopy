@@ -1,9 +1,16 @@
-﻿using Microsoft.Extensions.Logging;
+﻿// Copyright(c) 2019 Vertical Software - All rights reserved
+//
+// This code file has been made available under the terms of the
+// MIT license. Please refer to LICENSE.txt in the root directory
+// or refer to https://opensource.org/licenses/MIT
+
 using System;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Vertical.TemplateCopy.Abstractions;
 using Vertical.TemplateCopy.Configuration;
-using Vertical.TemplateCopy.Macros;
+using Vertical.TemplateCopy.Utilities;
 
 namespace Vertical.TemplateCopy.Text
 {
@@ -15,14 +22,24 @@ namespace Vertical.TemplateCopy.Text
         private readonly ILogger<MacroVariableProvider> logger;
         private readonly Options options;
         private readonly IDictionary<string, IMacro> macroDictionary;
+        private readonly IPathContextAccessor pathContext;
 
+        /// <summary>
+        /// Creates a new instance.
+        /// </summary>
+        /// <param name="logger">Logger</param>
+        /// <param name="options">User options</param>
+        /// <param name="macroDictionary">Dictionary where the keys are macro names</param>
+        /// <param name="pathContext">Path context access</param>
         public MacroVariableProvider(ILogger<MacroVariableProvider> logger
             , Options options
-            , IDictionary<string, IMacro> macroDictionary)
+            , IDictionary<string, IMacro> macroDictionary
+            , IPathContextAccessor pathContext)
         {
-            this.logger = logger;
-            this.options = options;
-            this.macroDictionary = macroDictionary;
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.options = options ?? throw new ArgumentNullException(nameof(options));
+            this.macroDictionary = macroDictionary ?? throw new ArgumentNullException(nameof(macroDictionary));
+            this.pathContext = pathContext ?? throw new ArgumentNullException(nameof(pathContext));
         }
 
         public string TransformContent(string source)
@@ -35,14 +52,28 @@ namespace Vertical.TemplateCopy.Text
                     return match.Value;
 
                 if (!macroDictionary.TryGetValue(fn, out var macro))
+                {
+                    logger.LogWarning("Macro pattern {match} not matched to existing function in {context} @char {pos}."
+                        + "{n}The macro was defined in template {template} @char {pos}"
+                        , new
+                        {
+                            match = match.Value,
+                            context = pathContext.Target,
+                            pos = match.Index,
+                            template = pathContext.Template,
+                            LoggingConstants.NewLine
+                        });
                     return match.Value;
+                }
 
                 var arg = match.Groups["arg"].Value;
                 var value = macro.ComputeValue(arg);
 
-                logger.LogTrace("Replace {match} with macro value '{value}'"
+                logger.LogTrace("Replace {match} with macro value '{value}' in {context} @char {pos}"
                     , match.Value
-                    , value);
+                    , value
+                    , pathContext.Target
+                    , match.Index);
 
                 return value;
             });
