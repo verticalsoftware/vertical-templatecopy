@@ -7,7 +7,7 @@
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>t4copy</ToolCommandName>
     <PackageId>vertical-templatecopy</PackageId>
-    <PackageVersion>1.0.0</PackageVersion>
+    <PackageVersion>1.0.1</PackageVersion>
     <PackageTags>commandline;utilities</PackageTags>
     <PackageProjectUrl>https://github.com/verticalsoftware/vertical-templatecopy</PackageProjectUrl>
     <PackageLicense>https://opensource.org/licenses/MIT</PackageLicense>

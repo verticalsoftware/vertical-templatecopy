@@ -1,5 +1,9 @@
 # vertical-templatecopy
 
+[![Build Status](https://dev.azure.com/vertical-software/vertical-templatecopy/_apis/build/status/vertical-templatecopy?branchName=master)](https://dev.azure.com/vertical-software/vertical-templatecopy/_build/latest?definitionId=2&branchName=master)
+![Azure DevOps coverage](https://img.shields.io/azure-devops/coverage/vertical-software/vertical-templatecopy/2)
+![Nuget](https://img.shields.io/nuget/v/vertical-templatecopy)
+
 Copy the contents of one directory to the other, while having the ability to make content and filename substitutions along the way using variables.
 
 ## Installation
