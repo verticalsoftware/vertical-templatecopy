@@ -45,6 +45,9 @@ steps:
 
 - script:
     dotnet tool install -g dotnet-reportgenerator-globaltool
+  displayName: Install code coverage tool
+
+- script:
     reportgenerator -reports:$(Build.SourcesDirectory)/test/**/coverage.cobertura.xml -targetdir:$(Build.SourcesDirectory)/CodeCoverage -reporttypes:HtmlInline_AzurePipelines;Cobertura
   displayName: Create code coverage report
 
