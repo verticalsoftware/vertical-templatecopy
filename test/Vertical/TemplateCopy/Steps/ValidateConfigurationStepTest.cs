@@ -11,6 +11,7 @@ using Moq;
 using Shouldly;
 using Vertical.TemplateCopy.Configuration;
 using Xunit;
+using static Helpers.PathHelper;
 
 namespace Vertical.TemplateCopy.Steps
 {
@@ -22,11 +23,11 @@ namespace Vertical.TemplateCopy.Steps
         [Fact]
         public void Run_Throws_For_Null_OutputPath()
         {
-            fileSystem.Directory.CreateDirectory(@"c:\template");
+            fileSystem.Directory.CreateDirectory(_Path("/template"));
 
             var options = new Options
             {
-                TemplatePath = @"c:\template"
+                TemplatePath = _Path("/template")
             };
 
             Should.Throw<AbortException>(() => new ValidateConfigurationStep(logger, fileSystem, options).Run());
@@ -37,7 +38,7 @@ namespace Vertical.TemplateCopy.Steps
         {
             var options = new Options
             {
-                OutputPath = @"c:\output"
+                OutputPath = _Path("/output")
             };
 
             Should.Throw<AbortException>(() => new ValidateConfigurationStep(logger, fileSystem, options).Run());
@@ -48,8 +49,8 @@ namespace Vertical.TemplateCopy.Steps
         {
             var options = new Options
             {
-                OutputPath = @"c:\output",
-                TemplatePath = @"c:\template"
+                OutputPath = _Path("/output"),
+                TemplatePath = _Path("/template")
             };
 
             Should.Throw<AbortException>(() => new ValidateConfigurationStep(logger, fileSystem, options).Run());
@@ -58,12 +59,12 @@ namespace Vertical.TemplateCopy.Steps
         [Fact]
         public void Run_Throws_For_Invalid_ArgumentMatchPattern()
         {
-            fileSystem.Directory.CreateDirectory(@"c:\template");
+            fileSystem.Directory.CreateDirectory(_Path("/template"));
 
             var options = new Options
             {
-                OutputPath = @"c:\output",
-                TemplatePath = @"c:\template",
+                OutputPath = _Path("/output"),
+                TemplatePath = _Path("/template"),
                 ArgumentVariableMatchPattern = "("
             };
 
@@ -73,12 +74,12 @@ namespace Vertical.TemplateCopy.Steps
         [Fact]
         public void Run_Throws_For_Invalid_EnvironemntMatchPattern()
         {
-            fileSystem.Directory.CreateDirectory(@"c:\template");
+            fileSystem.Directory.CreateDirectory(_Path("/template"));
 
             var options = new Options
             {
-                OutputPath = @"c:\output",
-                TemplatePath = @"c:\template",
+                OutputPath = _Path("/output"),
+                TemplatePath = _Path("/template"),
                 EnvironmentVariableMatchPattern = "("
             };
 
@@ -88,12 +89,12 @@ namespace Vertical.TemplateCopy.Steps
         [Fact]
         public void Run_Throws_For_Invalid_MacroMatchPattern()
         {
-            fileSystem.Directory.CreateDirectory(@"c:\template");
+            fileSystem.Directory.CreateDirectory(_Path("/template"));
 
             var options = new Options
             {
-                OutputPath = @"c:\output",
-                TemplatePath = @"c:\template",
+                OutputPath = _Path("/output"),
+                TemplatePath = _Path("/template"),
                 MacroMatchPattern = "("
             };
 
