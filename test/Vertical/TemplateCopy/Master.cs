@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.IO.Abstractions.TestingHelpers;
 using Moq;
 using Serilog;
@@ -7,6 +6,7 @@ using Shouldly;
 using Vertical.TemplateCopy.Configuration;
 using Vertical.TemplateCopy.Macros;
 using Xunit;
+using static Helpers.PathHelper;
 
 namespace Vertical.TemplateCopy
 {
@@ -24,8 +24,8 @@ namespace Vertical.TemplateCopy
 
             var options = new Options
             {
-                TemplatePath = @"c:\template",
-                OutputPath = @"c:\output",
+                TemplatePath = _Path("template"),
+                OutputPath = _Path("output"),
                 Variables =
                 {
                     [solutionKey] = solutionValue,

@@ -15,6 +15,7 @@ using Shouldly;
 using Vertical.TemplateCopy.Abstractions;
 using Vertical.TemplateCopy.Configuration;
 using Xunit;
+using static Helpers.PathHelper;
 
 namespace Vertical.TemplateCopy.Steps
 {
@@ -23,22 +24,22 @@ namespace Vertical.TemplateCopy.Steps
         private static readonly Dictionary<string, MockFileData> files =
             new Dictionary<string, MockFileData>
         {
-            [@"c:\template\project.csproj"] = new MockFileData("<project data>"),
-            [@"c:\template\src\Vertical\TemplateCopy\Class1.cs"] = new MockFileData("public class Class1"),
-            [@"c:\template\src\Vertical\TemplateCopy\Class2.cs"] = new MockFileData("public class Class2")
+            [_Path(@"/template/project.csproj")] = new MockFileData("<project data>"),
+            [_Path(@"/template/src/Vertical/TemplateCopy/Class1.cs")] = new MockFileData("public class Class1"),
+            [_Path(@"/template/src/Vertical/TemplateCopy/Class2.cs")] = new MockFileData("public class Class2")
         };
 
         private static readonly string[] defaultFiles = new[]
         {
-            @"c:\output\project.csproj",
-            @"c:\output\src\Vertical\TemplateCopy\Class1.cs",
-            @"c:\output\src\Vertical\TemplateCopy\Class2.cs"
+            _Path("/output/project.csproj"),
+            _Path("/output/src/Vertical/TemplateCopy/Class1.cs"),
+            _Path("/output/src/Vertical/TemplateCopy/Class2.cs")
         };
 
         private readonly Options options = new Options
         {
-            OutputPath = @"c:\output",
-            TemplatePath = @"c:\template"
+            OutputPath = _Path(@"/output"),
+            TemplatePath = _Path(@"/template")
         };
 
         private readonly IFileSystem fileSystem = new MockFileSystem(files);
@@ -93,7 +94,7 @@ namespace Vertical.TemplateCopy.Steps
             var transformMock = new Mock<ITextTransform>();
             transformMock.Setup(m => m.TransformContent(content, source, dest)).Verifiable();
             transformMock.Setup(m => m.TransformContent(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-                .Returns<string, string, string>((s, _, __) => s);
+                .Returns<string, string, string>((s, a, b) => s);
 
             var testInstance = new CopyTemplateStep(new Mock<ILogger<CopyTemplateStep>>().Object
                 , options
@@ -109,22 +110,22 @@ namespace Vertical.TemplateCopy.Steps
 
         public static IEnumerable<object[]> TransformTheories => new[]
         {
-            new[] { @"project.csproj", @"c:\template\project.csproj", @"resolveFileName:project.csproj" },
-            new[] { @"<project data>", @"c:\template\project.csproj", @"c:\output\project.csproj" },
-            new[] { @"src", @"c:\template\src", @"resolveDirectoryName:src" },
-            new[] { @"Vertical", @"c:\template\src\Vertical", @"resolveDirectoryName:Vertical" },
-            new[] { @"TemplateCopy", @"c:\template\src\Vertical\TemplateCopy", @"resolveDirectoryName:TemplateCopy" },
-            new[] { @"Class1.cs", @"c:\template\src\Vertical\TemplateCopy\Class1.cs", @"resolveFileName:Class1.cs" },
-            new[] { @"public class Class1", @"c:\template\src\Vertical\TemplateCopy\Class1.cs", @"c:\output\src\Vertical\TemplateCopy\Class1.cs" },
-            new[] { @"Class2.cs", @"c:\template\src\Vertical\TemplateCopy\Class2.cs", @"resolveFileName:Class2.cs" },
-            new[] { @"public class Class2", @"c:\template\src\Vertical\TemplateCopy\Class2.cs", @"c:\output\src\Vertical\TemplateCopy\Class2.cs" }
+            new[] { "project.csproj", _Path("/template/project.csproj"), "resolveFileName:project.csproj" },
+            new[] { "<project data>", _Path("/template/project.csproj"), _Path("/output/project.csproj") },
+            new[] { "src", _Path("/template/src"), "resolveDirectoryName:src" },
+            new[] { "Vertical", _Path("/template/src/Vertical"), "resolveDirectoryName:Vertical" },
+            new[] { "TemplateCopy", _Path("/template/src/Vertical/TemplateCopy"), "resolveDirectoryName:TemplateCopy" },
+            new[] { "Class1.cs", _Path("/template/src/Vertical/TemplateCopy/Class1.cs"), "resolveFileName:Class1.cs" },
+            new[] { "public class Class1", _Path("/template/src/Vertical/TemplateCopy/Class1.cs"), _Path("/output/src/Vertical/TemplateCopy/Class1.cs") },
+            new[] { "Class2.cs", _Path("/template/src/Vertical/TemplateCopy/Class2.cs"), "resolveFileName:Class2.cs" },
+            new[] { "public class Class2", _Path("/template/src/Vertical/TemplateCopy/Class2.cs"), _Path("/output/src/Vertical/TemplateCopy/Class2.cs") }
         };
 
         [Fact]
         public void Run_Throws_For_Duplicate_Object_With_No_Overwrite()
         {
-            fileSystem.Directory.CreateDirectory(@"c:\output\src\Vertical\TemplateCopy");
-            fileSystem.File.WriteAllText(@"c:\output\src\Vertical\TemplateCopy\Class1.cs", "data");
+            fileSystem.Directory.CreateDirectory(_Path("/output/src/Vertical/TemplateCopy"));
+            fileSystem.File.WriteAllText(_Path("/output/src/Vertical/TemplateCopy/Class1.cs"), "data");
 
             var testInstance = new CopyTemplateStep(new Mock<ILogger<CopyTemplateStep>>().Object
                 , options
