@@ -95,7 +95,7 @@ namespace Vertical.TemplateCopy
                 + $"outputDirectory={options.OutputPath} "
                 + $"templateDirectory={options.TemplatePath} "
                 + $"specialFolder={(PathMacros.SpecialFolder.ComputeValue("ProgramFiles"))} "
-                + $"targetContext={outputProjectFolder}\\{projectValue}.settings "
+                + $"targetContext={_Path(outputProjectFolder, projectValue)}.settings "
                 + $"templateContext={settingsTemplatePath}";
 
             outputMacroFileContent.ShouldBe(expectedMacroFileContent);

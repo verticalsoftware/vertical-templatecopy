@@ -5,9 +5,9 @@ namespace Helpers
 {
     public static class PathHelper
     {
-        public static string _Path(string p)
+        public static string _Path(params string[] p)
         {
-            return Path.GetFullPath(p);
+            return Path.GetFullPath((string.Join('/', p)));
         }
     }
 }
