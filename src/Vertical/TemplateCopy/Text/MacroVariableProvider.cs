@@ -67,7 +67,7 @@ namespace Vertical.TemplateCopy.Text
                 }
 
                 var arg = match.Groups["arg"].Value;
-                var value = macro.ComputeValue(arg);
+                var value = CompareMacroValue(macro, arg, match.Index);
 
                 logger.LogTrace("Replace {match} with macro value '{value}' in {context} @char {pos}"
                     , match.Value
@@ -77,6 +77,19 @@ namespace Vertical.TemplateCopy.Text
 
                 return value;
             });
+        }
+
+        private string CompareMacroValue(IMacro macro, string arg, int pos)
+        {
+            try
+            {
+                return macro.ComputeValue(arg);
+            }
+            catch (Exception ex)
+            {
+                var message = ex.Message + "{n}The macro was defined in template {template} @char {pos}";
+                throw logger.LogErrorWithAbort(message, LoggingConstants.NewLine, pos);
+            }
         }
     }
 }

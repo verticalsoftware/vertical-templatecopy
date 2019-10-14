@@ -26,5 +26,13 @@ namespace Vertical.TemplateCopy.Macros
             PathMacros.ExpandDotToPath.ComputeValue("vertical.templatecopy")
                 .ShouldBe($"vertical{Path.DirectorySeparatorChar}templatecopy");
         }
+
+        [Fact]
+        public void ExpandToPath_Returns_Value()
+        {
+            PathMacros.ExpandToPath.ComputeValue("vertical").ShouldBe("vertical");
+            PathMacros.ExpandToPath.ComputeValue("vertical,templatecopy").ShouldBe(
+                $"vertical{Path.DirectorySeparatorChar}templatecopy");
+        }
     }
 }

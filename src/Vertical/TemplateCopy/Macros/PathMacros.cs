@@ -24,6 +24,26 @@ namespace Vertical.TemplateCopy.Macros
         /// <summary>
         /// Returns a string that expands dot notation identifier to a path.
         /// </summary>
-        public static IMacro ExpandDotToPath = new DelegateMacro(arg => arg.Replace('.', Path.DirectorySeparatorChar));
+        public static IMacro ExpandDotToPath = new DelegateMacro(arg =>
+        {
+            if (string.IsNullOrWhiteSpace(arg))
+            {
+                throw new ArgumentException("ExpandDotToPath: argument required.");
+            }
+            return arg.Replace('.', Path.DirectorySeparatorChar);
+        });
+        
+        /// <summary>
+        /// Returns a string that expands to path.
+        /// </summary>
+        public static IMacro ExpandToPath = new DelegateMacro(arg =>
+        {
+            if (string.IsNullOrWhiteSpace(arg))
+            {
+                throw new ArgumentException("ExpandDoToPath: argument required.");
+            }
+
+            return arg.Replace(',', Path.DirectorySeparatorChar);
+        });
     }
 }
