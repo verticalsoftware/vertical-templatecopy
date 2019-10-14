@@ -99,8 +99,11 @@ BUILT-IN MACROS
 		currentDirectory()
 			Returns the current working directory.
 
-		expandDotToPath()
-			Converts the given identifier delimited by dots to a path. E.g. Vertical.TemplateCopy becomes Vertical/TemplateCopy.
+		expandDotToPath(<ARG>)
+			Converts the given identifier <ARG> delimited by dots to a path. E.g. Vertical.TemplateCopy becomes Vertical/TemplateCopy.
+			
+		expandToPath(<ARG>)
+		    Converts the comma separated value <ARG> to a path. E.g. Vertical,TemplateCopy becomes Vertical/TemplateCopy.
 
 		machineName()
 			Returns the machine name.

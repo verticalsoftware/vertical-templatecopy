@@ -37,6 +37,7 @@ namespace Vertical.TemplateCopy.Macros
 
                 ["specialFolder"] = PathMacros.SpecialFolder,
                 ["expandDotToPath"] = PathMacros.ExpandDotToPath,
+                ["expandToPath"] = PathMacros.ExpandToPath,
 
                 ["targetContext"] = new PathContextMacro(provider.GetService<IPathContextAccessor>()
                     , context => context.Target),
