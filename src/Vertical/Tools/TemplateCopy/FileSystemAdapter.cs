@@ -19,14 +19,14 @@ namespace Vertical.Tools.TemplateCopy
     public class FileSystem : IFileSystem
     {
         private readonly ILogger _logger;
-        private readonly Options _options;
+        private readonly IOptionsProvider _options;
 
         /// <summary>
         /// Creates a new instance 
         /// </summary>
         /// <param name="logger"></param>
         /// <param name="options"></param>
-        public FileSystem(ILogger logger, Options options)
+        public FileSystem(ILogger logger, IOptionsProvider options)
         {
             _logger = logger;
             _options = options;

@@ -30,16 +30,19 @@ namespace Vertical.Tools.TemplateCopy
 
             var fileSystemMock = new Mock<IFileSystem>();
             fileSystemMock.Setup(m => m.ReadFile("/src/script.cs")).Returns(code);
+            fileSystemMock.Setup(m => m.ResolvePath(It.IsAny<string>())).Returns<string>(p => p);
 
             var options = new Options
             {
                 ExtensionScriptPaths = {"/src/script.cs"},
                 Properties = { ["Color"] = "blue" }
             };
+            
+            var optionsProvider = new OptionsProvider(options);
 
-            var subject = new ExtensionScriptSymbolStore(new CSharpCompiler(new Options())
+            var subject = new ExtensionScriptSymbolStore(new CSharpCompiler(optionsProvider)
                 , new Mock<ILogger>().Object
-                , options
+                , optionsProvider
                 , fileSystemMock.Object);
             
             subject.Build();

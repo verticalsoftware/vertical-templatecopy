@@ -4,6 +4,7 @@
 // MIT license. Please refer to LICENSE.txt in the root directory
 // or refer to https://opensource.org/licenses/MIT
 
+using System;
 using System.Collections.Generic;
 using Serilog;
 
@@ -40,12 +41,25 @@ namespace Vertical.Tools.TemplateCopy
         {
             _logger.Information("Generating template assets to {target}", _options.TargetPath);
 
+            try
+            {
+                RunTasks();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.Message);
+                _logger.Debug("Error trace: {exception}", ex);
+            }
+
+            _logger.Information("Operation completed successfully");
+        }
+
+        private void RunTasks()
+        {
             foreach (var task in _sequenceTasks)
             {
                 task.Execute();
             }
-
-            _logger.Information("Operation completed successfully");
         }
     }
 }
