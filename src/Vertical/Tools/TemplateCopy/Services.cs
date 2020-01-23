@@ -29,7 +29,7 @@ namespace Vertical.Tools.TemplateCopy
         /// <summary>
         /// Gets the orchestrator.
         /// </summary>
-        public Orchestrator Orchestrator => _serviceProvider.GetService<Orchestrator>();
+        public TaskAggregator TaskAggregator => _serviceProvider.GetService<TaskAggregator>();
 
         /// <summary>
         /// Gets the logger
@@ -43,14 +43,14 @@ namespace Vertical.Tools.TemplateCopy
             services
                 .AddSingleton(options)
                 .AddSingleton(LoggerFactory.CreateLogger(options))
-                .AddSingleton<Orchestrator>()
+                .AddSingleton<TaskAggregator>()
                 .AddSingleton<ICompiler, CSharpCompiler>()
                 .AddSingleton<IContentResolver, ContentResolver>()
                 .AddSingleton<ISymbolStore, EnvironmentSymbolStore>()
                 .AddSingleton<ISymbolStore, ExtensionScriptSymbolStore>()
                 .AddSingleton<ISymbolStore, OptionsSymbolStore>()
                 .AddSingleton<IOptionsValidator, OptionsValidator>()
-                .AddSingleton<IFileSystem, FileSystem>()
+                .AddSingleton<IFileSystemAdapter, FileSystemAdapter>()
                 .AddSingleton<IOptionsProvider, OptionsProvider>()
                 .AddSingleton<ISequenceTask, ValidateOptionsTask>()
                 .AddSingleton<ISequenceTask, LoadSymbolsTask>()

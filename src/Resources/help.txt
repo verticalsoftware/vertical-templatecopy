@@ -1,0 +1,69 @@
+﻿NAME
+
+    t4copy - Generate a directory of files from templates
+    
+SYNOPSIS
+
+    t4copy [OPTIONS] <source [,source...]>
+    
+DESCRIPTION
+
+    t4copy copies files from one or more source directories to a target directory. The file content can be optionally transformed using an extensible set of key/value properties that match to placeholders in the file. Key/value properties can be command line options, environment variables, or defined in one or more C# scripts.
+
+OPTIONS
+
+    --asm <path>
+    
+        Path to one or more assemblies that are included as references to the script compiler. 
+
+    -c, --cx <.extension[;.extension2...]>
+    
+        A semi-colon delimited list of file extensions that identify files that could have placeholders that can be transformed. Files that do not match the extensions listed in this option are simply copied. 
+
+    -o, --overwrite
+    
+        Instructs the utility to overwrite files that already exist. If this is not specified, the utility will terminate and display an error.
+
+    -p, --prop <key=value>
+    
+        A key/value property pair to inject into the environment.
+        
+    --plan
+    
+        Instructs the utility to display what it will do, but not make any changes to the file system.       
+
+    --script <source>
+    
+        Paths to one or more script files that define the values for more complex properties that are either dynamic or cannot be expressed on the command line.
+        
+    --symbol <pattern>
+    
+        A regular expression that defines the pattern the text engine uses to match placeholder symbols. If not specified, the engine uses a pattern (\$\{(?<symbol>[a-zA-Z0-9_]+)\}) that matches ${PROPERTY} as a template placeholder. If you wish to override this behavior, ensure your pattern has a capturing group named 'symbol' defined, otherwise the engine will not be able to distinguish between the entire symbol to be replaced and the symbol name to match to property values.    
+
+    -t, --target <path>
+    
+        The directory where the output will be written to. The utility will create the directory if it does not exist.
+
+    -v, --verbosity <level>
+    
+        The verbosity level of the logger that displays status messages to the console. Levels could be verbose, debug, information, warning or error. If not specified, the information level is used.
+        
+    -w, --warn-symbols
+    
+        Instructs the utility to display warnings for placeholders that do not have matching properties in any of the property providers.
+        
+ARGUMENTS
+
+    source
+    
+        The root path that contains artifacts to be copied to the target directory. Note the source directory itself is not created in the respective target directory.
+        
+                   
+        
+        
+        
+    
+        
+        
+             
+    

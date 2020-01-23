@@ -11,7 +11,7 @@ namespace Vertical.Tools.TemplateCopy
     /// <summary>
     /// Abstracts the file system interface.
     /// </summary>
-    public interface IFileSystem
+    public interface IFileSystemAdapter
     {
         /// <summary>
         /// Resolves the path, inferring the working directory if needed.

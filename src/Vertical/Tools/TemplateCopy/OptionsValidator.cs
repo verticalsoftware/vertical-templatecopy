@@ -6,6 +6,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Serilog;
 
 namespace Vertical.Tools.TemplateCopy
@@ -16,17 +17,17 @@ namespace Vertical.Tools.TemplateCopy
     public class OptionsValidator : IOptionsValidator
     {
         private readonly ILogger _logger;
-        private readonly IFileSystem _fileSystem;
+        private readonly IFileSystemAdapter _fileSystemAdapter;
 
         /// <summary>
         /// Creates a new instance.
         /// </summary>
         /// <param name="logger">Logger</param>
-        /// <param name="fileSystem">File system</param>
-        public OptionsValidator(ILogger logger, IFileSystem fileSystem)
+        /// <param name="fileSystemAdapter">File system</param>
+        public OptionsValidator(ILogger logger, IFileSystemAdapter fileSystemAdapter)
         {
             _logger = logger;
-            _fileSystem = fileSystem;
+            _fileSystemAdapter = fileSystemAdapter;
         }
         
         /// <summary>
@@ -36,7 +37,7 @@ namespace Vertical.Tools.TemplateCopy
         {
             foreach (var path in paths)
             {
-                _fileSystem.Validate(path);
+                _fileSystemAdapter.Validate(path);
             }
         }
 
@@ -48,9 +49,18 @@ namespace Vertical.Tools.TemplateCopy
             if (!options.SourcePaths.Any())
                 throw Exceptions.NoSourcePaths();
             
-            ValidateFiles(options.SourcePaths.Select(path => _fileSystem.ResolvePath(path)));
-            ValidateFiles(options.ExtensionScriptPaths.Select(path => _fileSystem.ResolvePath(path)));
-            ValidateFiles(options.AssemblyReferences.Select(path => _fileSystem.ResolvePath(path)));
+            ValidateFiles(options.SourcePaths.Select(path => _fileSystemAdapter.ResolvePath(path)));
+            ValidateFiles(options.ExtensionScriptPaths.Select(path => _fileSystemAdapter.ResolvePath(path)));
+            ValidateFiles(options.AssemblyReferences.Select(path => _fileSystemAdapter.ResolvePath(path)));
+
+            try
+            {
+                var _ = Regex.Match(string.Empty, options.SymbolPattern);
+            }
+            catch
+            {
+                throw Exceptions.InvalidSymbolPattern(options.SymbolPattern);
+            }
         }
     }
 }

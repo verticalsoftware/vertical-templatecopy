@@ -1,4 +1,5 @@
 using System;
+using Infrastructure;
 using Moq;
 using Serilog;
 using Shouldly;
@@ -12,7 +13,7 @@ namespace Vertical.Tools.TemplateCopy
         
         private readonly ISymbolStore _subject = new Func<ISymbolStore>(() =>
         {
-            var logger = new Mock<ILogger>().Object;
+            var logger = MockLogger.Default;
             Environment.SetEnvironmentVariable("VERTICAL_TESTID", Id);
             var subject = new EnvironmentSymbolStore(logger);
             subject.Build();

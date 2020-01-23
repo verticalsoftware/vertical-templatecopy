@@ -8,29 +8,29 @@ namespace Vertical.Tools.TemplateCopy
     /// </summary>
     public class OptionsProvider : IOptionsProvider
     {
-        private readonly IFileSystem _fileSystem;
-
         /// <summary>
         /// Creates a new instance.
         /// </summary>
         /// <param name="values">Values</param>
-        /// <param name="fileSystem">File system abstraciton.</param>
-        public OptionsProvider(Options values, IFileSystem fileSystem)
+        public OptionsProvider(Options values)
         {
-            _fileSystem = fileSystem;
             Values = values;
         }
         
+        /// <inheritdoc />
         public Options Values { get; }
 
         /// <inheritdoc />
-        public IEnumerable<string> SourcePaths => Values.SourcePaths.Select(_fileSystem.ResolvePath);
+        public string SymbolPattern => Values.SymbolPattern;
 
         /// <inheritdoc />
-        public IEnumerable<string> AssemblyReferences => Values.AssemblyReferences.Select(_fileSystem.ResolvePath);
+        public IEnumerable<string> SourcePaths => Values.SourcePaths;
 
         /// <inheritdoc />
-        public string TargetPath => _fileSystem.ResolvePath(Values.TargetPath);
+        public IEnumerable<string> AssemblyReferences => Values.AssemblyReferences;
+
+        /// <inheritdoc />
+        public string TargetPath => Values.TargetPath;
 
         /// <inheritdoc />
         public IEnumerable<string> ContentFileExtensions => Values.ContentFileExtensions;
@@ -45,7 +45,7 @@ namespace Vertical.Tools.TemplateCopy
         public bool OverwriteFiles => Values.OverwriteFiles;
 
         /// <inheritdoc />
-        public IEnumerable<string> ExtensionScriptPaths => Values.ExtensionScriptPaths.Select(_fileSystem.ResolvePath);
+        public IEnumerable<string> ExtensionScriptPaths => Values.ExtensionScriptPaths;
 
         /// <inheritdoc />
         public IDictionary<string, string> Properties => Values.Properties;

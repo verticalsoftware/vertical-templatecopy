@@ -21,8 +21,8 @@ namespace Vertical.Tools.TemplateCopy
     {
         private readonly ICompiler _compiler;
         private readonly ILogger _logger;
-        private readonly Options _options;
-        private readonly IFileSystem _fileSystem;
+        private readonly IOptionsProvider _options;
+        private readonly IFileSystemAdapter _fileSystemAdapter;
 
         /// <summary>
         /// Creates a new instance
@@ -30,16 +30,16 @@ namespace Vertical.Tools.TemplateCopy
         /// <param name="compiler">Compiler</param>
         /// <param name="logger">Logger</param>
         /// <param name="options">Options</param>
-        /// <param name="fileSystem">File system</param>
+        /// <param name="fileSystemAdapter">File system</param>
         public ExtensionScriptSymbolStore(ICompiler compiler
             , ILogger logger
-            , Options options
-            , IFileSystem fileSystem)
+            , IOptionsProvider options
+            , IFileSystemAdapter fileSystemAdapter)
         {
             _compiler = compiler;
             _logger = logger;
             _options = options;
-            _fileSystem = fileSystem;
+            _fileSystemAdapter = fileSystemAdapter;
         }
 
         private IDictionary<string, Func<string>> Functions { get; set; }
@@ -52,6 +52,7 @@ namespace Vertical.Tools.TemplateCopy
                 : null;
         }
         
+        /// <inheritdoc />
         public void Build()
         {
             _logger.Debug("Loading symbols from extension scripts");
@@ -60,6 +61,7 @@ namespace Vertical.Tools.TemplateCopy
             
             var entries = _options
                 .ExtensionScriptPaths
+                .Select(_fileSystemAdapter.ResolvePath)
                 .SelectMany(LoadEntriesFromSource)
                 .ToArray();
             
@@ -83,7 +85,7 @@ namespace Vertical.Tools.TemplateCopy
 
             using var _ = _logger.Indent();
             
-            var source = _fileSystem.ReadFile(path);
+            var source = _fileSystemAdapter.ReadFile(path);
             var assembly = CompileToAssembly(path, source);
             var exportedType = GetExportedType(assembly, path);
             var instance = CreateExportedTypeInstance(exportedType, path);

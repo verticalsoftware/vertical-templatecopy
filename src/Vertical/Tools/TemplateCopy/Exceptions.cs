@@ -30,5 +30,8 @@ namespace Vertical.Tools.TemplateCopy
         
         public static Exception InvalidFileSystemObject(string path) => new ApplicationException(
             $"Failed to validate path {path} - object does not exist or current user does not have permission.");
+
+        public static Exception InvalidSymbolPattern(string pattern) => new ApplicationException(
+            $"Symbol matching pattern '{pattern}' (specified by --symbol) is not a valid regular expression.");
     }
 }

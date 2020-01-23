@@ -9,7 +9,7 @@ namespace Vertical.Tools.TemplateCopy
     /// </summary>
     public class ProcessTemplatesTask : ISequenceTask
     {
-        private readonly IFileSystem _fileSystem;
+        private readonly IFileSystemAdapter _fileSystemAdapter;
         private readonly IContentResolver _contentResolver;
         private readonly ILogger _logger;
         private readonly IOptionsProvider _options;
@@ -17,16 +17,16 @@ namespace Vertical.Tools.TemplateCopy
         /// <summary>
         /// Creates a new instance.
         /// </summary>
-        /// <param name="fileSystem">File system</param>
+        /// <param name="fileSystemAdapter">File system</param>
         /// <param name="contentResolver">Content resolver</param>
         /// <param name="logger">Logger</param>
         /// <param name="options">Options</param>
-        public ProcessTemplatesTask(IFileSystem fileSystem
+        public ProcessTemplatesTask(IFileSystemAdapter fileSystemAdapter
             , IContentResolver contentResolver
             , ILogger logger
             , IOptionsProvider options)
         {
-            _fileSystem = fileSystem;
+            _fileSystemAdapter = fileSystemAdapter;
             _contentResolver = contentResolver;
             _logger = logger;
             _options = options;
@@ -35,9 +35,12 @@ namespace Vertical.Tools.TemplateCopy
         /// <inheritdoc />
         public void Execute()
         {
-            foreach (var sourcePath in _options.SourcePaths)
+            var sourcePaths = _options.SourcePaths.Select(_fileSystemAdapter.ResolvePath);
+            var targetPath = _fileSystemAdapter.ResolvePath(_options.TargetPath);
+            
+            foreach (var sourcePath in sourcePaths)
             {
-                ProcessTemplateDirectory(sourcePath, _options.TargetPath);
+                ProcessTemplateDirectory(sourcePath, targetPath);
             }
         }
 
@@ -52,7 +55,7 @@ namespace Vertical.Tools.TemplateCopy
 
             var finalTargetPath = TransformToFinalPath(sourcePath, targetPath);
             
-            _fileSystem.CreateDirectory(finalTargetPath);
+            _fileSystemAdapter.CreateDirectory(finalTargetPath);
             
             ProcessTemplateFiles(sourcePath, finalTargetPath);
             ProcessTemplateDirectories(sourcePath, finalTargetPath);
@@ -63,7 +66,7 @@ namespace Vertical.Tools.TemplateCopy
         /// </summary>
         private void ProcessTemplateDirectories(string sourcePath, string targetPath)
         {
-            foreach (var directoryPath in _fileSystem.GetDirectories(sourcePath))
+            foreach (var directoryPath in _fileSystemAdapter.GetDirectories(sourcePath))
             {
                 ProcessTemplateDirectory(directoryPath, targetPath);
             }
@@ -74,7 +77,7 @@ namespace Vertical.Tools.TemplateCopy
         /// </summary>
         private void ProcessTemplateFiles(string sourcePath, string targetPath)
         {
-            foreach (var filePath in _fileSystem.GetFiles(sourcePath))
+            foreach (var filePath in _fileSystemAdapter.GetFiles(sourcePath))
             {
                 ProcessTemplateFile(filePath, targetPath);
             }
@@ -86,7 +89,7 @@ namespace Vertical.Tools.TemplateCopy
         private void ProcessTemplateFile(string filePath, string targetPath)
         {
             var finalFilePath = TransformToFinalPath(filePath, targetPath);
-            var extension = _fileSystem.GetFileExtension(finalFilePath);
+            var extension = _fileSystemAdapter.GetFileExtension(finalFilePath);
 
             if (_options.ContentFileExtensions.Contains(extension) || _options.ContentFileExtensions.Contains("*"))
             {
@@ -94,7 +97,7 @@ namespace Vertical.Tools.TemplateCopy
             }
             else
             {
-                _fileSystem.CopyFile(filePath, finalFilePath);
+                _fileSystemAdapter.CopyFile(filePath, finalFilePath);
             }
         }
 
@@ -104,9 +107,9 @@ namespace Vertical.Tools.TemplateCopy
         private void TransformTemplateFile(string sourcePath, string targetPath)
         {
             using var _ = _logger.Indent(LogEventLevel.Debug, "Transforming content file {source}", sourcePath);
-            var content = _fileSystem.ReadFile(sourcePath);
+            var content = _fileSystemAdapter.ReadFile(sourcePath);
             
-            _fileSystem.WriteFile(targetPath, _contentResolver.ReplaceSymbols(content));
+            _fileSystemAdapter.WriteFile(targetPath, _contentResolver.ReplaceSymbols(content));
         }
 
         /// <summary>
@@ -114,9 +117,9 @@ namespace Vertical.Tools.TemplateCopy
         /// </summary>
         private string TransformToFinalPath(string sourcePath, string targetPath)
         {
-            var fileName = _fileSystem.GetFileName(sourcePath);
+            var fileName = _fileSystemAdapter.GetFileName(sourcePath);
             var transformedFileName = _contentResolver.ReplaceSymbols(fileName);
-            var combinedPath = _fileSystem.CombinePaths(targetPath, transformedFileName);
+            var combinedPath = _fileSystemAdapter.CombinePaths(targetPath, transformedFileName);
 
             if (fileName != transformedFileName)
             {

@@ -13,7 +13,7 @@ namespace Vertical.Tools.TemplateCopy
     /// <summary>
     /// Represents the object that orchestrates generation of the template.
     /// </summary>
-    public class Orchestrator
+    public class TaskAggregator
     {
         private readonly ILogger _logger;
         private readonly IOptionsProvider _options;
@@ -25,7 +25,7 @@ namespace Vertical.Tools.TemplateCopy
         /// <param name="logger">Logger</param>
         /// <param name="options">Options</param>
         /// <param name="sequenceTasks">Sequence tasks.</param>
-        public Orchestrator(ILogger logger
+        public TaskAggregator(ILogger logger
             , IOptionsProvider options
             , IEnumerable<ISequenceTask> sequenceTasks)
         {

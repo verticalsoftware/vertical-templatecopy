@@ -19,7 +19,7 @@ namespace Vertical.Tools.TemplateCopy
 
             var services = Services.Create(options);
 
-            services.Orchestrator.ShouldNotBeNull();
+            services.TaskAggregator.ShouldNotBeNull();
         }
     }
 }

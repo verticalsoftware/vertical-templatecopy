@@ -18,25 +18,14 @@ namespace Vertical.Tools.TemplateCopy
     {
         private static void Main(string[] args)
         {
-            CommandLineApplication.Run(new OptionsConfiguration(Run), args);
-        }
-
-        /// <summary>
-        /// Handles the program
-        /// </summary>
-        private static void Run(Options options)
-        {
-            var services = Services.Create(options);
-
             try
             {
-                services.Orchestrator.Run();
+                CommandLineApplication.Run(new OptionsConfiguration(options =>
+                    Services.Create(options).TaskAggregator.Run()), new[]{"-h"});
             }
             catch (Exception ex)
             {
-                var logger = services.Logger;
-                logger.Error(ex.Message);
-                logger.Debug(ex, "Error occurred");
+                Console.WriteLine(ex.Message);
             }
         }
     }

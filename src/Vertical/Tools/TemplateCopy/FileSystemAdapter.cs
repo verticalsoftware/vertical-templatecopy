@@ -16,7 +16,7 @@ namespace Vertical.Tools.TemplateCopy
     /// Base class for the file system.
     /// </summary>
     [ExcludeFromCodeCoverage]
-    public class FileSystem : IFileSystem
+    public class FileSystemAdapter : IFileSystemAdapter
     {
         private readonly ILogger _logger;
         private readonly IOptionsProvider _options;
@@ -26,7 +26,7 @@ namespace Vertical.Tools.TemplateCopy
         /// </summary>
         /// <param name="logger"></param>
         /// <param name="options"></param>
-        public FileSystem(ILogger logger, IOptionsProvider options)
+        public FileSystemAdapter(ILogger logger, IOptionsProvider options)
         {
             _logger = logger;
             _options = options;

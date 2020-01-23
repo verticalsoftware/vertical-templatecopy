@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using Moq;
 using Shouldly;
 using Xunit;
 
@@ -16,7 +17,7 @@ namespace Vertical.Tools.TemplateCopy
                 AssemblyReferences = { typeof(System.Security.SecureString).Assembly.Location }
             };
 
-            var subject = new CSharpCompiler(options);
+            var subject = new CSharpCompiler(new OptionsProvider(options));
             
             var id = Guid.NewGuid().ToString();
 

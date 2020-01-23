@@ -1,4 +1,5 @@
 using System;
+using Infrastructure;
 using Moq;
 using Serilog;
 using Shouldly;
@@ -6,7 +7,7 @@ using Xunit;
 
 namespace Vertical.Tools.TemplateCopy
 {
-    public class ExtensionSymbolStoreTest
+    public class ExtensionSymbolStoreTests
     {
         [Fact]
         public void GetValueFunction_Returns_Expected_Value()
@@ -28,7 +29,7 @@ namespace Vertical.Tools.TemplateCopy
                 "    }", 
                 "}");
 
-            var fileSystemMock = new Mock<IFileSystem>();
+            var fileSystemMock = new Mock<IFileSystemAdapter>();
             fileSystemMock.Setup(m => m.ReadFile("/src/script.cs")).Returns(code);
             fileSystemMock.Setup(m => m.ResolvePath(It.IsAny<string>())).Returns<string>(p => p);
 
@@ -41,7 +42,7 @@ namespace Vertical.Tools.TemplateCopy
             var optionsProvider = new OptionsProvider(options);
 
             var subject = new ExtensionScriptSymbolStore(new CSharpCompiler(optionsProvider)
-                , new Mock<ILogger>().Object
+                , MockLogger.Default
                 , optionsProvider
                 , fileSystemMock.Object);
             

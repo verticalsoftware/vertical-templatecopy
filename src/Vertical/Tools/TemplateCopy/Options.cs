@@ -58,5 +58,10 @@ namespace Vertical.Tools.TemplateCopy
         /// Gets the property dictionary.
         /// </summary>
         public IDictionary<string, string> Properties { get; } = new Dictionary<string, string>();
+
+        /// <summary>
+        /// Gets the pattern to use when matching symbols.
+        /// </summary>
+        public string SymbolPattern { get; set; } = ContentResolver.DefaultSymbolPattern;
     }
 }

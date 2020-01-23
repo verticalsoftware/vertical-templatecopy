@@ -1,3 +1,4 @@
+using Infrastructure;
 using Moq;
 using Serilog;
 using Shouldly;
@@ -11,8 +12,8 @@ namespace Vertical.Tools.TemplateCopy
         public void GetValueFunction_Returns_Function_For_Value()
         {
             var options = new Options { Properties = {["color"] = "blue" }};
-            var subject = new OptionsSymbolStore(new OptionsProvider(options, new Mock<IFileSystem>().Object)
-                , new Mock<ILogger>().Object);
+            var subject = new OptionsSymbolStore(new OptionsProvider(options)
+                , MockLogger.Default);
             
             subject.GetValueFunction("color")().ShouldBe("blue");
         }
@@ -20,8 +21,8 @@ namespace Vertical.Tools.TemplateCopy
         [Fact]
         public void GetValueFunction_Returns_Null_For_Unmatched_Key()
         {
-            var subject = new OptionsSymbolStore(new OptionsProvider(new Options(), new Mock<IFileSystem>().Object)
-                , new Mock<ILogger>().Object);
+            var subject = new OptionsSymbolStore(new OptionsProvider(new Options())
+                , MockLogger.Default);
             subject.GetValueFunction("none").ShouldBeNull();
         }
     }

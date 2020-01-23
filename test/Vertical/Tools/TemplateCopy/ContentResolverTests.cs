@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Infrastructure;
 using Moq;
 using Serilog;
 using Shouldly;
@@ -8,12 +9,12 @@ namespace Vertical.Tools.TemplateCopy
 {
     public class ContentResolverTests
     {
-        private readonly IContentResolver _subject = new ContentResolver(new Mock<ILogger>().Object
+        private readonly IContentResolver _subject = new ContentResolver(MockLogger.Default
             , new ISymbolStore[] {new OptionsSymbolStore(new OptionsProvider(new Options
             {
                 Properties = {["Color"] = "blue"}
-            }, new Mock<IFileSystem>().Object)
-                , new Mock<ILogger>().Object)}, new OptionsProvider(new Options(), new Mock<IFileSystem>().Object));
+            })
+                , MockLogger.Default)}, new OptionsProvider(new Options()));
         
         [Theory, MemberData(nameof(Theories))]
         public void ReplaceSymbols_Returns_Expected_Values(string content, string expected)

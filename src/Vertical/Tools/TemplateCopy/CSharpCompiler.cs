@@ -20,7 +20,7 @@ namespace Vertical.Tools.TemplateCopy
     /// </summary>
     public class CSharpCompiler : ICompiler
     {
-        private readonly Options _options;
+        private readonly IOptionsProvider _options;
 
         private static readonly MetadataReference[] CoreReferences = 
         {
@@ -46,7 +46,7 @@ namespace Vertical.Tools.TemplateCopy
         /// Creates a new instance.
         /// </summary>
         /// <param name="options">Options.</param>
-        public CSharpCompiler(Options options)
+        public CSharpCompiler(IOptionsProvider options)
         {
             _options = options;
         }
