@@ -28,7 +28,7 @@ namespace Vertical.Tools.TemplateCopy
 
         [Fact]
         public void AssemblyReferences_Returns_Expected() => _subject.AssemblyReferences.Single().ShouldBe("/ref/some.dll");
-
+        
         [Fact]
         public void OverwriteFiles_Returns_Expected() => _subject.OverwriteFiles.ShouldBeTrue();
 

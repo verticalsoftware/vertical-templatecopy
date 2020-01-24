@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Serilog;
 
 namespace Vertical.Tools.TemplateCopy
@@ -30,6 +31,7 @@ namespace Vertical.Tools.TemplateCopy
         }
 
         /// <inheritdoc />
+        [ExcludeFromCodeCoverage]
         public void Build()
         {
             _logger.Debug("Loading symbols passed in options");

@@ -62,6 +62,6 @@ namespace Vertical.Tools.TemplateCopy
         /// <summary>
         /// Gets the pattern to use when matching symbols.
         /// </summary>
-        public string SymbolPattern { get; set; } = ContentResolver.DefaultSymbolPattern;
+        public string SymbolPattern { get; set; } = Constants.DefaultSymbolPattern;
     }
 }

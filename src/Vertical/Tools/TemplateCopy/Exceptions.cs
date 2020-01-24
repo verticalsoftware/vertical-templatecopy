@@ -5,6 +5,7 @@
 // or refer to https://opensource.org/licenses/MIT
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Vertical.CommandLine;
 
 namespace Vertical.Tools.TemplateCopy
@@ -12,6 +13,7 @@ namespace Vertical.Tools.TemplateCopy
     /// <summary>
     /// Defines the application exceptions.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public static class Exceptions
     {
         public static Exception FileExists(string path) => new NotSupportedException(
@@ -33,5 +35,8 @@ namespace Vertical.Tools.TemplateCopy
 
         public static Exception InvalidSymbolPattern(string pattern) => new ApplicationException(
             $"Symbol matching pattern '{pattern}' (specified by --symbol) is not a valid regular expression.");
+
+        public static Exception InvalidAssemblyReference(string assembly) => new ApplicationException(
+            $"Could not find assembly reference '{assembly}'");
     }
 }

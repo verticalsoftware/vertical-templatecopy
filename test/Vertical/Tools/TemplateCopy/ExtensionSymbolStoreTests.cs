@@ -40,8 +40,11 @@ namespace Vertical.Tools.TemplateCopy
             };
             
             var optionsProvider = new OptionsProvider(options);
+            var assemblyResolver = new AssemblyResolver(new FileSystemAdapter(MockLogger.Default,
+                new Mock<IOptionsProvider>().Object), MockLogger.Default);
+            var compiler = new CSharpCompiler(optionsProvider, MockLogger.Default, assemblyResolver);
 
-            var subject = new ExtensionScriptSymbolStore(new CSharpCompiler(optionsProvider)
+            var subject = new ExtensionScriptSymbolStore(compiler
                 , MockLogger.Default
                 , optionsProvider
                 , fileSystemMock.Object);

@@ -6,6 +6,12 @@ SYNOPSIS
 
     t4copy [OPTIONS] <source [,source...]>
     
+TL;DR
+
+    Copy all objects from /usr/templates to /usr/src, transform content in any file, and transform any ${solution} placeholders with the value 'Vertical.TemplateCopy':  
+
+        t4copy /usr/templates -t /usr/src --tx .* -p solution=Vertical.TemplateCopy
+    
 DESCRIPTION
 
     t4copy copies files from one or more source directories to a target directory. The file content can be optionally transformed using an extensible set of key/value properties that match to placeholders in the file. Key/value properties can be command line options, environment variables, or defined in one or more C# scripts.
@@ -15,10 +21,6 @@ OPTIONS
     --asm <path>
     
         Path to one or more assemblies that are included as references to the script compiler. 
-
-    -c, --cx <.extension[;.extension2...]>
-    
-        A semi-colon delimited list of file extensions that identify files that could have placeholders that can be transformed. Files that do not match the extensions listed in this option are simply copied. 
 
     -o, --overwrite
     
@@ -44,6 +46,10 @@ OPTIONS
     
         The directory where the output will be written to. The utility will create the directory if it does not exist.
 
+    --tx <.extension[;.extension2...]>
+    
+        A semi-colon delimited list of file extensions that identify files that could have placeholders that can be transformed. Files that do not match the extensions listed in this option are simply copied. All files can be transformed by using wildcard notation, e.g. --tx .*
+
     -v, --verbosity <level>
     
         The verbosity level of the logger that displays status messages to the console. Levels could be verbose, debug, information, warning or error. If not specified, the information level is used.
@@ -56,8 +62,38 @@ ARGUMENTS
 
     source
     
-        The root path that contains artifacts to be copied to the target directory. Note the source directory itself is not created in the respective target directory.
+        The root path that contains artifacts to be copied to the target directory. Note the source directory itself is not created in the target directory, only the files and sub-directories. For instance, if the source directory is /templates/api and the target directory is /usr/src/api, the utility will not create a subdirectory in /usr/src/api called api. Instead it will generate/copy all files and directories from /template/api to /usr/src/api.
         
+TRANSFORMATIONS
+
+    The main purpose of the utility is to transform content files as they are being copied from one directory to another. It does this by identifying placeholders in the source files. By default, a placeholder is some text symbol that is wrapped in handlebars within the content of the file. For instance, if there is a file that has ${Project} within it, the utility will search for a property in the environment called 'Project' and replace it in the file with whatever the value is. Properties can be defined by command line parameters, environment variables, C# script files, and by inline expressions. Properties defined by command line parameters always take precedence over the other definition methods.
+    
+EXTENSIBILITY SCRIPTS
+
+    An extensibility script is where more complex properties can be defined that require logic to be resolved. Simply put, an extensibility script is a file that contains a single C# class that has one or more public string properties defined. When resolving the values of property keys, t4copy will inspect this class for the property name and then dynamically invoke the code to retrieve the value. The namespace and class name are not important because the utility will reflect and use the first exported type. Additionally, if the class in the script needs access to the properties passed by the command line, the constructor of the class can accept an IDictionary<string, string>. E.g.:
+    
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    
+    namespace T4Copy
+    {
+        public class Props
+        {
+            public Props(IDictionary<string, string> cliParameters)
+            {
+                // Pretend user passed -p "root=/usr/src";
+                SourceDirectory = Path.Combine(cliParameters["root"], "Vertical/TemplateCopy");
+            }
+            
+            public string SourceDirectory { get; }
+            public string Namespace => "Vertical.TemplateCopy";
+            public string CurrentUser => Environment.UserName;
+            public string Now => DateTime.Now.ToString();
+        }
+    } 
+
+  
                    
         
         

@@ -8,8 +8,10 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Vertical.CommandLine;
 
+
 namespace Vertical.Tools.TemplateCopy
 {
+    
     /// <summary>
     /// Program entry point.
     /// </summary>
@@ -21,7 +23,7 @@ namespace Vertical.Tools.TemplateCopy
             try
             {
                 CommandLineApplication.Run(new OptionsConfiguration(options =>
-                    Services.Create(options).TaskAggregator.Run()), new[]{"-h"});
+                    Services.Create(options).TaskAggregator.Run()), args);
             }
             catch (Exception ex)
             {

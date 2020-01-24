@@ -33,12 +33,18 @@ namespace Vertical.Tools.TemplateCopy
         }
 
         /// <inheritdoc />
+        public string CurrentDirectory => Directory.GetCurrentDirectory();
+
+        /// <inheritdoc />
         public string ResolvePath(string path)
         {
             return Path.IsPathRooted(path)
                 ? path
                 : Path.GetFullPath(path);
         }
+
+        /// <inheritdoc />
+        public string GetDirectoryName(string path) => Path.GetDirectoryName(path);
 
         /// <inheritdoc />
         public string GetFileName(string path) => Path.GetFileName(path);
@@ -83,12 +89,14 @@ namespace Vertical.Tools.TemplateCopy
         }
 
         /// <inheritdoc />
-        public void Validate(string path)
+        public bool Validate(string path, bool throwException)
         {
             if (File.Exists(path) || Directory.Exists(path))
-                return;
+                return true;
 
-            throw Exceptions.InvalidFileSystemObject(path);
+            return throwException
+                ? throw Exceptions.InvalidFileSystemObject(path)
+                : false;
         }
 
         private string ValidateWritePath(string path)

@@ -17,14 +17,18 @@ namespace Vertical.Tools.TemplateCopy
     {
         private readonly IServiceProvider _serviceProvider;
 
-        private Services(Options options) => _serviceProvider = BuildServiceProvider(options);
+        private Services(Options options, Action<IServiceCollection> configureServices) => 
+            _serviceProvider = BuildServiceProvider(options, configureServices);
 
         /// <summary>
         /// Creates a services instance.
         /// </summary>
         /// <param name="options">Command line options</param>
         /// <returns><see cref="Services"/></returns>
-        public static Services Create(Options options) => new Services(options);
+        public static Services Create(Options options) => new Services(options, null);
+        
+        internal static Services Create(Options options, Action<IServiceCollection> configureServices) =>
+            new Services(options, configureServices);
 
         /// <summary>
         /// Gets the orchestrator.
@@ -32,11 +36,12 @@ namespace Vertical.Tools.TemplateCopy
         public TaskAggregator TaskAggregator => _serviceProvider.GetService<TaskAggregator>();
 
         /// <summary>
-        /// Gets the logger
+        /// Gets a service instance.
         /// </summary>
-        public ILogger Logger => _serviceProvider.GetService<ILogger>();
+        internal T GetService<T>() => _serviceProvider.GetService<T>();
 
-        private static IServiceProvider BuildServiceProvider(Options options)
+        private static IServiceProvider BuildServiceProvider(Options options
+            , Action<IServiceCollection> configureServices)
         {
             var services = new ServiceCollection();
 
@@ -55,7 +60,10 @@ namespace Vertical.Tools.TemplateCopy
                 .AddSingleton<ISequenceTask, ValidateOptionsTask>()
                 .AddSingleton<ISequenceTask, LoadSymbolsTask>()
                 .AddSingleton<ISequenceTask, ProcessTemplatesTask>()
+                .AddSingleton<IAssemblyResolver, AssemblyResolver>()
                 ;
+            
+            configureServices?.Invoke(services);
             
             return services.BuildServiceProvider();
         }

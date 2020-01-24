@@ -13,10 +13,10 @@ namespace Vertical.Tools.TemplateCopy
         {
             var args = new[]
             {
-                "-s", "/usr/sources",
-                "-s", "/usr/templates",
+                "/usr/sources",
+                "/usr/templates",
                 "-t", "/usr/lib",
-                "-c", ".csproj;.cs;.sln",
+                "--tx", ".csproj;.cs;.sln",
                 "-v", "debug",
                 "--script", "/usr/scripts/source.cs",
                 "-p", "color=blue",

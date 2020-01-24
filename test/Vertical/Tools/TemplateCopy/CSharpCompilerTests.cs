@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using Infrastructure;
 using Moq;
 using Shouldly;
 using Xunit;
@@ -17,17 +18,25 @@ namespace Vertical.Tools.TemplateCopy
                 AssemblyReferences = { typeof(System.Security.SecureString).Assembly.Location }
             };
 
-            var subject = new CSharpCompiler(new OptionsProvider(options));
+            var logger = MockLogger.Default;
+            var assemblyResolver = new AssemblyResolver(new FileSystemAdapter(MockLogger.Default
+                , new Mock<IOptionsProvider>().Object), logger);
+            var subject = new CSharpCompiler(new OptionsProvider(options)
+                , logger
+                , assemblyResolver);
             
             var id = Guid.NewGuid().ToString();
 
-            var code = @"
+            var code = $@"
                 using System;
-                namespace _Test {
-                    public class Props {
-                        public string Id => ${id}; 
-                    }                
-                }                 
+                using System.Collections.Generic;
+                using System.Linq;
+                namespace _Test {{
+                    public class Props 
+                    {{
+                        public string Id => ${{id}};
+                    }}                
+                }}                 
             ".Replace("${id}", "\"" + id + "\"");
 
             var assemblyBytes = subject.Compile(code);
@@ -41,6 +50,31 @@ namespace Vertical.Tools.TemplateCopy
             var idValue = idProp.GetValue(instance);
             
             idValue.ShouldBe(id);
+        }
+
+        [Fact]
+        public void Compile_With_Errors_Throws_AggregateException()
+        {
+            var logger = MockLogger.Default;
+            var assemblyResolver = new AssemblyResolver(new FileSystemAdapter(MockLogger.Default
+                , new Mock<IOptionsProvider>().Object), logger);
+            var subject = new CSharpCompiler(new Mock<IOptionsProvider>().Object
+                , logger
+                , assemblyResolver);
+
+            const string code = @"
+                using System;
+                using System.Collections.Generic;
+                using System.Linq;
+                namespace _Test {
+                    public class Props 
+                    {
+                        public string IllegalPropertyName! {get;}
+                    }                
+                }              
+            ";
+
+            Should.Throw<AggregateException>(() => subject.Compile(code));
         }
     }
 }

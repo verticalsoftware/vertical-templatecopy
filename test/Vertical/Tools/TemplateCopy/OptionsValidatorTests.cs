@@ -22,7 +22,7 @@ namespace Vertical.Tools.TemplateCopy
         {
             var path = Path.GetFullPath("/usr/template");
             var fileSystemMock = new Mock<IFileSystemAdapter>();
-            fileSystemMock.Setup(m => m.Validate(path)).Throws<ApplicationException>();
+            fileSystemMock.Setup(m => m.Validate(path, true)).Throws<ApplicationException>();
             fileSystemMock.Setup(m => m.ResolvePath(It.IsAny<string>())).Returns<string>(Path.GetFullPath);
             
             var options = new Options {SourcePaths = {path}};
@@ -36,7 +36,7 @@ namespace Vertical.Tools.TemplateCopy
         {
             var path = Path.GetFullPath("/usr/extension.txt");
             var fileSystemMock = new Mock<IFileSystemAdapter>();
-            fileSystemMock.Setup(m => m.Validate(path)).Throws<ApplicationException>();
+            fileSystemMock.Setup(m => m.Validate(path, true)).Throws<ApplicationException>();
             fileSystemMock.Setup(m => m.ResolvePath(It.IsAny<string>())).Returns<string>(Path.GetFullPath);
 
             var options = new Options
@@ -54,7 +54,7 @@ namespace Vertical.Tools.TemplateCopy
         {
             var path = Path.GetFullPath("/usr/bin/core.dll");
             var fileSystemMock = new Mock<IFileSystemAdapter>();
-            fileSystemMock.Setup(m => m.Validate(path)).Throws<ApplicationException>();
+            fileSystemMock.Setup(m => m.Validate(path, true)).Throws<ApplicationException>();
             fileSystemMock.Setup(m => m.ResolvePath(It.IsAny<string>())).Returns<string>(Path.GetFullPath);
 
             var options = new Options

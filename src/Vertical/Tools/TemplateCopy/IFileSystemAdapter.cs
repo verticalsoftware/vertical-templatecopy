@@ -14,12 +14,24 @@ namespace Vertical.Tools.TemplateCopy
     public interface IFileSystemAdapter
     {
         /// <summary>
+        /// Gets the current directory.
+        /// </summary>
+        string CurrentDirectory { get; }
+        
+        /// <summary>
         /// Resolves the path, inferring the working directory if needed.
         /// </summary>
         /// <param name="path">Path to resolve.</param>
         /// <returns>Path</returns>
         string ResolvePath(string path);
 
+        /// <summary>
+        /// Gets a directory name.
+        /// </summary>
+        /// <param name="path">Path</param>
+        /// <returns>Path</returns>
+        string GetDirectoryName(string path);
+        
         /// <summary>
         /// Gets the file name from the path.
         /// </summary>
@@ -68,6 +80,8 @@ namespace Vertical.Tools.TemplateCopy
         /// <summary>
         /// Validates a file or directory.
         /// </summary>
-        void Validate(string path);
+        /// <param name="path">Path to validate</param>
+        /// <param name="throw">Whether to throw an exception if the object is not valid.</param>
+        bool Validate(string path, bool @throw);
     }
 }

@@ -37,7 +37,7 @@ namespace Vertical.Tools.TemplateCopy
         {
             foreach (var path in paths)
             {
-                _fileSystemAdapter.Validate(path);
+                _fileSystemAdapter.Validate(path, true);
             }
         }
 

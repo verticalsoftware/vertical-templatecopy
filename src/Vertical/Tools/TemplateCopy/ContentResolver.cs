@@ -20,11 +20,6 @@ namespace Vertical.Tools.TemplateCopy
     /// </summary>
     public class ContentResolver : IContentResolver
     {
-        /// <summary>
-        /// Defines the default symbol matching pattern.
-        /// </summary>
-        public const string DefaultSymbolPattern = @"\$\{(?<symbol>[a-zA-Z0-9_]+)\}";
-        
         private readonly ObjectPool<StringBuilder> _stringBuilderPool = 
             new DefaultObjectPool<StringBuilder>(new PoolPolicy(), 5);
         private readonly ILogger _logger;

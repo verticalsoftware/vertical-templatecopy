@@ -28,4 +28,15 @@
     <DotNetCliToolReference Include="dotnet-reportgenerator-cli" Version="4.4.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Resources\resources.zip" />
+    <Content Include="Resources\template.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Remove="Resources\results.zip" />
+    <Content Include="Resources\results.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

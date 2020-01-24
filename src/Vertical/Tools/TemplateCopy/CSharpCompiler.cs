@@ -12,6 +12,8 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
 using Microsoft.CodeAnalysis.Text;
+using Serilog;
+using Serilog.Events;
 
 namespace Vertical.Tools.TemplateCopy
 {
@@ -21,17 +23,9 @@ namespace Vertical.Tools.TemplateCopy
     public class CSharpCompiler : ICompiler
     {
         private readonly IOptionsProvider _options;
-
-        private static readonly MetadataReference[] CoreReferences = 
-        {
-            MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
-            MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location),
-            MetadataReference.CreateFromFile(typeof(System.Data.DataColumn).Assembly.Location),
-            MetadataReference.CreateFromFile(typeof(File).Assembly.Location),
-            MetadataReference.CreateFromFile(typeof(System.Net.Cookie).Assembly.Location),
-            MetadataReference.CreateFromFile(typeof(System.Net.Http.HttpClient).Assembly.Location),
-            MetadataReference.CreateFromFile(typeof(System.Xml.NameTable).Assembly.Location)
-        };
+        private readonly ILogger _logger;
+        private readonly IAssemblyResolver _assemblyResolver;
+        private readonly Lazy<IList<MetadataReference>> _lazyMetadataReferences;
 
         private static readonly CSharpCompilationOptions CompileOptions = 
             new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary
@@ -46,9 +40,14 @@ namespace Vertical.Tools.TemplateCopy
         /// Creates a new instance.
         /// </summary>
         /// <param name="options">Options.</param>
-        public CSharpCompiler(IOptionsProvider options)
+        /// <param name="logger">Logger</param>
+        /// <param name="assemblyResolver">Assembly resolver</param>
+        public CSharpCompiler(IOptionsProvider options, ILogger logger, IAssemblyResolver assemblyResolver)
         {
             _options = options;
+            _logger = logger;
+            _assemblyResolver = assemblyResolver;
+            _lazyMetadataReferences = new Lazy<IList<MetadataReference>>(BuildCoreReferences);
         }
 
         /// <inheritdoc />
@@ -65,7 +64,7 @@ namespace Vertical.Tools.TemplateCopy
 
             var compilation = CSharpCompilation.Create("TemplateCopyMacros"
                 , new[] {syntaxTree}
-                , references: CoreReferences
+                , references: _lazyMetadataReferences.Value
                 , options: CompileOptions);
 
             var emitResult = compilation.Emit(peStream);
@@ -77,9 +76,6 @@ namespace Vertical.Tools.TemplateCopy
             return peStream.ToArray();
         }
 
-        private IEnumerable<MetadataReference> BuildMetadataReferences => CoreReferences.Concat(
-            _options.AssemblyReferences.Select(asmRef => MetadataReference.CreateFromFile(asmRef)));
-        
         private static void CheckCompilationResult(EmitResult emitResult)
         {
             if (emitResult.Success) return;
@@ -89,6 +85,42 @@ namespace Vertical.Tools.TemplateCopy
                 .Select(entry => new InvalidOperationException(entry.GetMessage()));
 
             throw new AggregateException(exceptions);
+        }
+
+        private IList<MetadataReference> BuildCoreReferences()
+        {
+            using var _ = _logger.Indent(LogEventLevel.Verbose, "Building core metadata references");
+
+            var coreAssemblyPaths = new[]
+                {
+                    "mscorlib",
+                    "netstandard",
+                    "System", 
+                    "System.Core", 
+                    "System.Runtime",
+                    "System.Collections",
+                    "System.Data",
+                    "System.Data.Common",
+                    "System.IO",
+                    "System.Linq",
+                    "System.Net",
+                    "System.Net.Http",
+                    "System.Threading",
+                    "System.Xml",
+                    typeof(object).Assembly.Location
+                }
+                .Select(path => _assemblyResolver.GetAssemblyPath(path));
+            
+            var userAssemblyPaths = _options
+                .AssemblyReferences
+                .Select(_assemblyResolver.GetAssemblyPath);
+
+            var combinedPaths = coreAssemblyPaths.Concat(userAssemblyPaths);
+
+            return combinedPaths
+                .Select(path => MetadataReference.CreateFromFile(path))
+                .Cast<MetadataReference>()
+                .ToList();
         }
     }
 }

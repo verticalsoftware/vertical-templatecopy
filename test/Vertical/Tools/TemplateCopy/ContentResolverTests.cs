@@ -31,5 +31,20 @@ namespace Vertical.Tools.TemplateCopy
             new object[]{ "I have one symbol, value=${Color}, then other content", "I have one symbol, value=blue, then other content" },
             new object[]{ "I have two symbols, value=${Color} and ${Color}", "I have two symbols, value=blue and blue"}
         };
+
+        [Fact]
+        public void LoadSymbols_Invokes_SymbolStores()
+        {
+            var symbolStoreMock = new Mock<ISymbolStore>();
+            var subject = new ContentResolver(MockLogger.Default
+                , new[]{symbolStoreMock.Object}
+                , new Mock<IOptionsProvider>().Object);
+
+            symbolStoreMock.Setup(m => m.Build()).Verifiable();
+            
+            subject.LoadSymbols();
+            
+            symbolStoreMock.Verify(m => m.Build());
+        }
     }
 }
