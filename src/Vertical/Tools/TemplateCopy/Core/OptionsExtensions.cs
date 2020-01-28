@@ -5,10 +5,12 @@
 // or refer to https://opensource.org/licenses/MIT
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Vertical.Tools.TemplateCopy.Core
 {
+    [ExcludeFromCodeCoverage]
     public static class OptionsExtensions
     {
         /// <summary>

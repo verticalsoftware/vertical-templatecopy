@@ -46,6 +46,8 @@ namespace Vertical.Tools.TemplateCopy.Tasks
         /// <inheritdoc />
         public void Execute()
         {
+            _logger.Information("Generating template assets to {path}", _options.TargetPath);
+            
             var sourcePaths = _options.SourcePaths.Select(_fileSystemAdapter.ResolvePath);
             var targetPath = _fileSystemAdapter.ResolvePath(_options.TargetPath);
             

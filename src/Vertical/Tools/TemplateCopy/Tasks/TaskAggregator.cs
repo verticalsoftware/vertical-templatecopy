@@ -40,7 +40,7 @@ namespace Vertical.Tools.TemplateCopy.Tasks
         /// </summary>
         public void Run()
         {
-            _logger.Information("Generating template assets to {target}", _options.TargetPath);
+            
 
             try
             {
@@ -50,6 +50,7 @@ namespace Vertical.Tools.TemplateCopy.Tasks
             {
                 _logger.Error(ex.Message);
                 _logger.Debug("Error trace: {exception}", ex);
+                return;
             }
 
             _logger.Information("Operation completed successfully");

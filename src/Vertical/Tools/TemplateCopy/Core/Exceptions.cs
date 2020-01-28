@@ -6,6 +6,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using Vertical.CommandLine;
 
 namespace Vertical.Tools.TemplateCopy.Core
@@ -38,7 +39,7 @@ namespace Vertical.Tools.TemplateCopy.Core
         public static Exception InvalidSymbolPattern(string pattern) => new ApplicationException(
             $"Symbol matching pattern '{pattern}' (specified by --symbol) is not a valid regular expression.");
 
-        public static Exception InvalidAssemblyReference(string assembly) => new ApplicationException(
+        public static Exception InvalidAssemblyReference(string assembly) => new FileNotFoundException(
             $"Could not find assembly reference '{assembly}'");
     }
 }
