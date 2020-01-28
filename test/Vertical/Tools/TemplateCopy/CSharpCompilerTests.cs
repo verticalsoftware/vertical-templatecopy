@@ -4,7 +4,12 @@ using System.Reflection;
 using Infrastructure;
 using Moq;
 using Shouldly;
+using Vertical.Tools.TemplateCopy.Core;
+using Vertical.Tools.TemplateCopy.IO;
+using Vertical.Tools.TemplateCopy.Providers;
+using Vertical.Tools.TemplateCopy.Scripting;
 using Xunit;
+using Mocks = Moq.Mocks;
 
 namespace Vertical.Tools.TemplateCopy
 {
@@ -18,12 +23,12 @@ namespace Vertical.Tools.TemplateCopy
                 AssemblyReferences = { typeof(System.Security.SecureString).Assembly.Location }
             };
 
-            var logger = MockLogger.Default;
-            var assemblyResolver = new AssemblyResolver(new FileSystemAdapter(MockLogger.Default
-                , new Mock<IOptionsProvider>().Object), logger);
+            var logger = TestObjects.Logger;
+            var assemblyResolver = new AssemblyResolver(TestObjects.FileSystemAdapter, logger);
             var subject = new CSharpCompiler(new OptionsProvider(options)
                 , logger
-                , assemblyResolver);
+                , assemblyResolver
+                , TestObjects.FileSystemAdapter);
             
             var id = Guid.NewGuid().ToString();
 
@@ -55,12 +60,12 @@ namespace Vertical.Tools.TemplateCopy
         [Fact]
         public void Compile_With_Errors_Throws_AggregateException()
         {
-            var logger = MockLogger.Default;
-            var assemblyResolver = new AssemblyResolver(new FileSystemAdapter(MockLogger.Default
-                , new Mock<IOptionsProvider>().Object), logger);
-            var subject = new CSharpCompiler(new Mock<IOptionsProvider>().Object
+            var logger = TestObjects.Logger;
+            var assemblyResolver = new AssemblyResolver(TestObjects.FileSystemAdapter, logger);
+            var subject = new CSharpCompiler(TestObjects.OptionsProvider
                 , logger
-                , assemblyResolver);
+                , assemblyResolver
+                , TestObjects.FileSystemAdapter);
 
             const string code = @"
                 using System;

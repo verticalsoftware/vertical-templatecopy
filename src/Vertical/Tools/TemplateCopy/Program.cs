@@ -7,6 +7,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Vertical.CommandLine;
+using Vertical.Tools.TemplateCopy.Core;
 
 
 namespace Vertical.Tools.TemplateCopy
@@ -24,6 +25,11 @@ namespace Vertical.Tools.TemplateCopy
             {
                 CommandLineApplication.Run(new OptionsConfiguration(options =>
                     Services.Create(options).TaskAggregator.Run()), args);
+            }
+            catch (UsageException ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine("Display help using -h or --help");
             }
             catch (Exception ex)
             {

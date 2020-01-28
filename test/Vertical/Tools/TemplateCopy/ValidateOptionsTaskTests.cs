@@ -1,6 +1,8 @@
 ﻿using Infrastructure;
 using Moq;
-using Serilog;
+using Vertical.Tools.TemplateCopy.Core;
+using Vertical.Tools.TemplateCopy.Providers;
+using Vertical.Tools.TemplateCopy.Tasks;
 using Xunit;
 
 namespace Vertical.Tools.TemplateCopy
@@ -14,7 +16,7 @@ namespace Vertical.Tools.TemplateCopy
             var optionsProvider = new OptionsProvider(new Options());
             var subject = new ValidateOptionsTask(validatorMock.Object
                 , optionsProvider
-                , MockLogger.Default);
+                , TestObjects.Logger);
 
             validatorMock.Setup(m => m.Validate(It.IsAny<Options>())).Verifiable();
 

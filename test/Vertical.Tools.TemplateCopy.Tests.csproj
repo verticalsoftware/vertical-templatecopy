@@ -29,13 +29,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Resources\resources.zip" />
     <Content Include="Resources\template.zip">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Remove="Resources\results.zip" />
-    <Content Include="Resources\results.zip">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <Content Include="Resources\output.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 

@@ -1,20 +1,21 @@
 using System.Collections.Generic;
 using Infrastructure;
 using Moq;
-using Serilog;
 using Shouldly;
+using Vertical.Tools.TemplateCopy.Core;
+using Vertical.Tools.TemplateCopy.Providers;
 using Xunit;
 
 namespace Vertical.Tools.TemplateCopy
 {
     public class ContentResolverTests
     {
-        private readonly IContentResolver _subject = new ContentResolver(MockLogger.Default
+        private readonly IContentResolver _subject = new ContentResolver(TestObjects.Logger
             , new ISymbolStore[] {new OptionsSymbolStore(new OptionsProvider(new Options
             {
                 Properties = {["Color"] = "blue"}
             })
-                , MockLogger.Default)}, new OptionsProvider(new Options()));
+                , TestObjects.Logger)}, new OptionsProvider(new Options()));
         
         [Theory, MemberData(nameof(Theories))]
         public void ReplaceSymbols_Returns_Expected_Values(string content, string expected)
@@ -36,7 +37,7 @@ namespace Vertical.Tools.TemplateCopy
         public void LoadSymbols_Invokes_SymbolStores()
         {
             var symbolStoreMock = new Mock<ISymbolStore>();
-            var subject = new ContentResolver(MockLogger.Default
+            var subject = new ContentResolver(TestObjects.Logger
                 , new[]{symbolStoreMock.Object}
                 , new Mock<IOptionsProvider>().Object);
 

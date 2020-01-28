@@ -1,4 +1,5 @@
 using Shouldly;
+using Vertical.Tools.TemplateCopy.Core;
 using Xunit;
 
 namespace Vertical.Tools.TemplateCopy

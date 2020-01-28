@@ -1,5 +1,7 @@
 ﻿using Infrastructure;
 using Moq;
+using Vertical.Tools.TemplateCopy.Providers;
+using Vertical.Tools.TemplateCopy.Tasks;
 using Xunit;
 
 namespace Vertical.Tools.TemplateCopy
@@ -10,7 +12,7 @@ namespace Vertical.Tools.TemplateCopy
         public void Run_Invokes_Sequence_Tasks()
         {
             var taskMock = new Mock<ISequenceTask>();
-            var subject = new TaskAggregator(MockLogger.Default
+            var subject = new TaskAggregator(TestObjects.Logger
                 , new Mock<IOptionsProvider>().Object
                 , new[]{taskMock.Object}); 
                 

@@ -2,6 +2,7 @@ using System.Linq;
 using Serilog.Events;
 using Shouldly;
 using Vertical.CommandLine;
+using Vertical.Tools.TemplateCopy.Core;
 using Xunit;
 
 namespace Vertical.Tools.TemplateCopy
@@ -15,7 +16,7 @@ namespace Vertical.Tools.TemplateCopy
             {
                 "/usr/sources",
                 "/usr/templates",
-                "-t", "/usr/lib",
+                "/usr/lib",
                 "--tx", ".csproj;.cs;.sln",
                 "-v", "debug",
                 "--script", "/usr/scripts/source.cs",

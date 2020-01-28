@@ -4,6 +4,19 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace />
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>t4copy</ToolCommandName>
+    <PackageId>vertical-templatecopy</PackageId>
+    <PackageVersion>2.0</PackageVersion>
+    <PackageTags>commandline;utilities</PackageTags>
+    <PackageProjectUrl>https://github.com/verticalsoftware/vertical-templatecopy</PackageProjectUrl>
+    <PackageLicense>https://opensource.org/licenses/MIT</PackageLicense>
+    <PackageIcon>logo.png</PackageIcon>
+    <RepositoryType>git</RepositoryType>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <Title>vertical-templatecopy</Title>
+    <Copyright>Copyright (C) 2019-2020 Vertical Software</Copyright>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,6 +24,7 @@
     <PackageReference Include="microsoft.extensions.dependencyinjection" Version="3.1.1" />
     <PackageReference Include="microsoft.extensions.objectpool" Version="3.1.1" />
     <PackageReference Include="serilog.sinks.console" Version="3.1.1" />
+    <PackageReference Include="system.io.abstractions" Version="8.0.3" />
     <PackageReference Include="vertical-commandline" Version="1.0.2" />
   </ItemGroup>
 

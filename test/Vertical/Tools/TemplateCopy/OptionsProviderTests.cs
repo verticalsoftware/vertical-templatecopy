@@ -2,6 +2,8 @@
 using System.Linq;
 using Serilog.Events;
 using Shouldly;
+using Vertical.Tools.TemplateCopy.Core;
+using Vertical.Tools.TemplateCopy.Providers;
 using Xunit;
 
 namespace Vertical.Tools.TemplateCopy

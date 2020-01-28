@@ -3,6 +3,10 @@ using Infrastructure;
 using Moq;
 using Serilog;
 using Shouldly;
+using Vertical.Tools.TemplateCopy.Core;
+using Vertical.Tools.TemplateCopy.IO;
+using Vertical.Tools.TemplateCopy.Providers;
+using Vertical.Tools.TemplateCopy.Scripting;
 using Xunit;
 
 namespace Vertical.Tools.TemplateCopy
@@ -40,19 +44,22 @@ namespace Vertical.Tools.TemplateCopy
             };
             
             var optionsProvider = new OptionsProvider(options);
-            var assemblyResolver = new AssemblyResolver(new FileSystemAdapter(MockLogger.Default,
-                new Mock<IOptionsProvider>().Object), MockLogger.Default);
-            var compiler = new CSharpCompiler(optionsProvider, MockLogger.Default, assemblyResolver);
+            var assemblyResolver = new AssemblyResolver(TestObjects.FileSystemAdapter, TestObjects.Logger);
+            var compiler = new CSharpCompiler(optionsProvider
+                , TestObjects.Logger
+                , assemblyResolver
+                , TestObjects.FileSystemAdapter);
 
             var subject = new ExtensionScriptSymbolStore(compiler
-                , MockLogger.Default
+                , TestObjects.Logger
                 , optionsProvider
-                , fileSystemMock.Object);
+                , fileSystemMock.Object
+                , new ExtensionTypeActivator(TestObjects.Logger));
             
             subject.Build();
             
             subject.GetValueFunction("Color")().ShouldBe("blue");
-            subject.GetValueFunction("PropertyCount")().ShouldBe("1");
+            subject.GetValueFunction("PropertyCount")().ShouldBe("8");
         }
     }
 }

@@ -2,15 +2,15 @@
 
     t4copy - Generate a directory of files from templates
     
-SYNOPSIS
-
-    t4copy [OPTIONS] <source [,source...]>
-    
 TL;DR
 
-    Copy all objects from /usr/templates to /usr/src, transform content in any file, and transform any ${solution} placeholders with the value 'Vertical.TemplateCopy':  
+    Copy all objects from /usr/templates to /usr/src while transforming any ${solution} placeholders in template files with the value 'Vertical.TemplateCopy':  
 
-        t4copy /usr/templates -t /usr/src --tx .* -p solution=Vertical.TemplateCopy
+        t4copy /usr/templates /usr/src -p solution=Vertical.TemplateCopy
+    
+SYNOPSIS
+
+    t4copy [OPTIONS] <source [,source...]> <destination>
     
 DESCRIPTION
 
@@ -20,7 +20,11 @@ OPTIONS
 
     --asm <path>
     
-        Path to one or more assemblies that are included as references to the script compiler. 
+        Path to one or more assemblies that are included as references to the script compiler.
+        
+    -h, --help
+        
+        Display help content.                 
 
     -o, --overwrite
     
@@ -38,21 +42,17 @@ OPTIONS
     
         Paths to one or more script files that define the values for more complex properties that are either dynamic or cannot be expressed on the command line.
         
-    --symbol <pattern>
+    --symbol-pattern <pattern>
     
-        A regular expression that defines the pattern the text engine uses to match placeholder symbols. If not specified, the engine uses a pattern (\$\{(?<symbol>[a-zA-Z0-9_]+)\}) that matches ${PROPERTY} as a template placeholder. If you wish to override this behavior, ensure your pattern has a capturing group named 'symbol' defined, otherwise the engine will not be able to distinguish between the entire symbol to be replaced and the symbol name to match to property values.    
-
-    -t, --target <path>
-    
-        The directory where the output will be written to. The utility will create the directory if it does not exist.
+        A regular expression that defines the pattern the text engine uses to match placeholder symbols. If not specified, the engine uses pattern (\$\{(?<symbol>[a-zA-Z0-9_]+)\}) that matches ${PROPERTY} as a template placeholder. If you wish to override this behavior, ensure your pattern has a capturing group named 'symbol' defined, otherwise the engine will not be able to distinguish between the entire symbol to be replaced and the symbol name to match to property value.    
 
     --tx <.extension[;.extension2...]>
     
-        A semi-colon delimited list of file extensions that identify files that could have placeholders that can be transformed. Files that do not match the extensions listed in this option are simply copied. All files can be transformed by using wildcard notation, e.g. --tx .*
+        A semi-colon delimited list of file extensions that identify files that could have placeholders that can be transformed. Files that do not match the extensions listed in this option are simply copied. If you do not specify file extensions explicitly, then ALL FILES WILL BE TRANSFORMED, so be aware of what types of files you have in your template.
 
     -v, --verbosity <level>
     
-        The verbosity level of the logger that displays status messages to the console. Levels could be verbose, debug, information, warning or error. If not specified, the information level is used.
+        The verbosity level of the logger that displays status messages to the console. Levels could be (v)erbose, (d)ebug, ((i)nfo)rmation, ((w)arn)ing, (e)rror, or (f)atal. If not specified, the information level is used.
         
     -w, --warn-symbols
     
@@ -64,13 +64,17 @@ ARGUMENTS
     
         The root path that contains artifacts to be copied to the target directory. Note the source directory itself is not created in the target directory, only the files and sub-directories. For instance, if the source directory is /templates/api and the target directory is /usr/src/api, the utility will not create a subdirectory in /usr/src/api called api. Instead it will generate/copy all files and directories from /template/api to /usr/src/api.
         
+    destination
+    
+        The path where files and directories found in the source paths are copied to.
+        
 TRANSFORMATIONS
 
     The main purpose of the utility is to transform content files as they are being copied from one directory to another. It does this by identifying placeholders in the source files. By default, a placeholder is some text symbol that is wrapped in handlebars within the content of the file. For instance, if there is a file that has ${Project} within it, the utility will search for a property in the environment called 'Project' and replace it in the file with whatever the value is. Properties can be defined by command line parameters, environment variables, C# script files, and by inline expressions. Properties defined by command line parameters always take precedence over the other definition methods.
     
 EXTENSIBILITY SCRIPTS
 
-    An extensibility script is where more complex properties can be defined that require logic to be resolved. Simply put, an extensibility script is a file that contains a single C# class that has one or more public string properties defined. When resolving the values of property keys, t4copy will inspect this class for the property name and then dynamically invoke the code to retrieve the value. The namespace and class name are not important because the utility will reflect and use the first exported type. Additionally, if the class in the script needs access to the properties passed by the command line, the constructor of the class can accept an IDictionary<string, string>. E.g.:
+    An extensibility script is where more complex properties can be defined that require logic to be resolved. Simply put, an extensibility script is a file that contains a single C# class that has one or more public string properties defined. When resolving the values of property keys, t4copy will inspect this class for the property name and then dynamically invoke the code to retrieve the value. The namespace and class name are not important because the utility will reflect and use the first exported type. The only requirement here is the class and its constructor are public. Additionally, if the class in the script needs access to the properties passed by the command line, the constructor of the class can accept an IDictionary<string, string>. E.g.:
     
     using System;
     using System.Collections.Generic;
@@ -91,15 +95,20 @@ EXTENSIBILITY SCRIPTS
             public string CurrentUser => Environment.UserName;
             public string Now => DateTime.Now.ToString();
         }
-    } 
-
-  
-                   
-        
-        
-        
+    }
     
-        
-        
-             
+    As of now, zero, one, ore more of the following parameters can be requested in the constructor of your class:
     
+        IDictionary<string,string>            
+            Contains a set of key/value pairs that is a culmination of properties specified on the command line and the values of the options. Options values are as follows ({x} indicates a zero based index):
+                t4copy:source{x} - Source path argument
+                t4copy:target - Target path argument
+                t4copy:assemblyReference{x} - Assembly reference option (--asm)
+                t4copy:contentFileExtensions{x} - Content file extensions (--tx)
+                t4copy:verbosity - Logger verbosity (-v, --verbosity)
+                t4copy:plan - Plan option (--plan)
+                t4copy:overwrite - Overwrite option (--o, --overwrite)
+                t4copy:warn_symbols - Warn symbols option (-w, --warn-symbols)
+            
+        Action<string>
+            A delegate that connects to the logger. Strings passed to this delegate are logged to the console.

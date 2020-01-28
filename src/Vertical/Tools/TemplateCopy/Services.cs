@@ -5,8 +5,14 @@
 // or refer to https://opensource.org/licenses/MIT
 
 using System;
+using System.IO.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
+using Vertical.Tools.TemplateCopy.Core;
+using Vertical.Tools.TemplateCopy.IO;
+using Vertical.Tools.TemplateCopy.Providers;
+using Vertical.Tools.TemplateCopy.Scripting;
+using Vertical.Tools.TemplateCopy.Tasks;
 
 namespace Vertical.Tools.TemplateCopy
 {
@@ -54,6 +60,7 @@ namespace Vertical.Tools.TemplateCopy
                 .AddSingleton<ISymbolStore, EnvironmentSymbolStore>()
                 .AddSingleton<ISymbolStore, ExtensionScriptSymbolStore>()
                 .AddSingleton<ISymbolStore, OptionsSymbolStore>()
+                .AddSingleton<IExtensionTypeActivator, ExtensionTypeActivator>()
                 .AddSingleton<IOptionsValidator, OptionsValidator>()
                 .AddSingleton<IFileSystemAdapter, FileSystemAdapter>()
                 .AddSingleton<IOptionsProvider, OptionsProvider>()
@@ -61,6 +68,7 @@ namespace Vertical.Tools.TemplateCopy
                 .AddSingleton<ISequenceTask, LoadSymbolsTask>()
                 .AddSingleton<ISequenceTask, ProcessTemplatesTask>()
                 .AddSingleton<IAssemblyResolver, AssemblyResolver>()
+                .AddSingleton<IFileSystem, FileSystem>()
                 ;
             
             configureServices?.Invoke(services);

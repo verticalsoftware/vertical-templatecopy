@@ -4,6 +4,9 @@ using Infrastructure;
 using Moq;
 using Serilog;
 using Shouldly;
+using Vertical.Tools.TemplateCopy.Core;
+using Vertical.Tools.TemplateCopy.IO;
+using Vertical.Tools.TemplateCopy.Providers;
 using Xunit;
 
 namespace Vertical.Tools.TemplateCopy
@@ -13,7 +16,7 @@ namespace Vertical.Tools.TemplateCopy
         [Fact]
         public void Validate_Throws_For_Missing_Source_Paths()
         {
-            var subject = new OptionsValidator(MockLogger.Default, new Mock<IFileSystemAdapter>().Object);
+            var subject = new OptionsValidator(TestObjects.Logger, TestObjects.FileSystemAdapter);
             Should.Throw<ApplicationException>(() => subject.Validate(new Options()));
         }
 
@@ -26,7 +29,7 @@ namespace Vertical.Tools.TemplateCopy
             fileSystemMock.Setup(m => m.ResolvePath(It.IsAny<string>())).Returns<string>(Path.GetFullPath);
             
             var options = new Options {SourcePaths = {path}};
-            var subject = new OptionsValidator(MockLogger.Default, fileSystemMock.Object);
+            var subject = new OptionsValidator(TestObjects.Logger, fileSystemMock.Object);
 
             Should.Throw<ApplicationException>(() => subject.Validate(options));
         }
@@ -44,7 +47,7 @@ namespace Vertical.Tools.TemplateCopy
                 SourcePaths = {"/usr/templates"},
                 ExtensionScriptPaths = { path }
             };
-            var subject = new OptionsValidator(MockLogger.Default, fileSystemMock.Object);
+            var subject = new OptionsValidator(TestObjects.Logger, fileSystemMock.Object);
 
             Should.Throw<ApplicationException>(() => subject.Validate(options));
         }
@@ -62,7 +65,7 @@ namespace Vertical.Tools.TemplateCopy
                 SourcePaths = {"/usr/templates"},
                 AssemblyReferences = { path }
             };
-            var subject = new OptionsValidator(MockLogger.Default, fileSystemMock.Object);
+            var subject = new OptionsValidator(TestObjects.Logger, fileSystemMock.Object);
 
             Should.Throw<ApplicationException>(() => subject.Validate(options));
         }
@@ -72,7 +75,7 @@ namespace Vertical.Tools.TemplateCopy
         {
             var fileSystemMock = new Mock<IFileSystemAdapter>();
             var options = new Options {SourcePaths = {"/usr/templates"}};
-            var subject = new OptionsValidator(MockLogger.Default, fileSystemMock.Object);
+            var subject = new OptionsValidator(TestObjects.Logger, fileSystemMock.Object);
 
             subject.Validate(options);
         }
