@@ -17,7 +17,7 @@ steps:
 - task: DotNetCoreInstaller@0
   displayName: 'Use .NET Core SDK 3.1'
   inputs:
-    version: 3.1.1.00
+    version: 3.1.101
 
 - task: DotNetCoreCLI@2
   displayName: 'dotnet build'
