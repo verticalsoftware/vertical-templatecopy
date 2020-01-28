@@ -2,16 +2,13 @@ using System;
 using System.Linq;
 using System.Reflection;
 using Infrastructure;
-using Moq;
 using Shouldly;
 using Vertical.Tools.TemplateCopy.Core;
 using Vertical.Tools.TemplateCopy.IO;
 using Vertical.Tools.TemplateCopy.Providers;
-using Vertical.Tools.TemplateCopy.Scripting;
 using Xunit;
-using Mocks = Moq.Mocks;
 
-namespace Vertical.Tools.TemplateCopy
+namespace Vertical.Tools.TemplateCopy.Scripting
 {
     public class CSharpCompilerTests
     {

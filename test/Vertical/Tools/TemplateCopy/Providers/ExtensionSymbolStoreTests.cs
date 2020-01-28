@@ -1,15 +1,13 @@
 using System;
 using Infrastructure;
 using Moq;
-using Serilog;
 using Shouldly;
 using Vertical.Tools.TemplateCopy.Core;
 using Vertical.Tools.TemplateCopy.IO;
-using Vertical.Tools.TemplateCopy.Providers;
 using Vertical.Tools.TemplateCopy.Scripting;
 using Xunit;
 
-namespace Vertical.Tools.TemplateCopy
+namespace Vertical.Tools.TemplateCopy.Providers
 {
     public class ExtensionSymbolStoreTests
     {

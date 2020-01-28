@@ -1,10 +1,9 @@
 ﻿using Infrastructure;
 using Moq;
 using Vertical.Tools.TemplateCopy.Providers;
-using Vertical.Tools.TemplateCopy.Tasks;
 using Xunit;
 
-namespace Vertical.Tools.TemplateCopy
+namespace Vertical.Tools.TemplateCopy.Tasks
 {
     public class TaskAggregatorTests
     {

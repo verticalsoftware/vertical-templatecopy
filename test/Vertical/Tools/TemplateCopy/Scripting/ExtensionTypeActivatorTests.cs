@@ -2,10 +2,9 @@ using System;
 using System.Collections.Generic;
 using Infrastructure;
 using Shouldly;
-using Vertical.Tools.TemplateCopy.Scripting;
 using Xunit;
 
-namespace Vertical.Tools.TemplateCopy
+namespace Vertical.Tools.TemplateCopy.Scripting
 {
     public class ExtensionTypeActivatorTests
     {

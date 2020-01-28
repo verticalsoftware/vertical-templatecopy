@@ -1,12 +1,9 @@
 using System;
 using Infrastructure;
-using Moq;
-using Serilog;
 using Shouldly;
-using Vertical.Tools.TemplateCopy.Providers;
 using Xunit;
 
-namespace Vertical.Tools.TemplateCopy
+namespace Vertical.Tools.TemplateCopy.Providers
 {
     public class EnvironmentSymbolStoreTests
     {

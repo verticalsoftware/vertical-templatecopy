@@ -8,7 +8,7 @@ using Vertical.Tools.TemplateCopy.Core;
 using Vertical.Tools.TemplateCopy.Scripting;
 using Xunit;
 
-namespace Vertical.Tools.TemplateCopy
+namespace Vertical.Tools.TemplateCopy.Tasks
 {
     public class ProcessTemplatesTaskTests
     {
