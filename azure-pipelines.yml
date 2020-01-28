@@ -11,7 +11,7 @@ pool:
 
 variables:
   buildConfiguration: 'Release'
-  projectPath: 'src/vertical-templatecopy.csproj'  
+  projectPath: 'src/Vertical.Tools.TemplateCopy.csproj'  
 
 steps:
 - task: DotNetCoreInstaller@0
