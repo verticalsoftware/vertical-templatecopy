@@ -1,142 +1,114 @@
-﻿t4copy - A program that creates files and folders according to a structured template.
+﻿NAME
 
-USAGE
+    t4copy - Generate a directory of files from templates
+    
+TL;DR
 
-	t4copy [OPTIONS]
+    Copy all objects from /usr/templates to /usr/src while transforming any ${solution} placeholders in template files with the value 'Vertical.TemplateCopy':  
 
+        t4copy /usr/templates /usr/src -p solution=Vertical.TemplateCopy
+    
+SYNOPSIS
+
+    t4copy [OPTIONS] <source [,source...]> <destination>
+    
 DESCRIPTION
 
-	t4copy creates a directory structure with files that are based off of a template. At its core, it copies the files and folder structure from a directory that serves as a template that contains files and child structures. Along with copying the assets, it is capable of performing substitutions using command line variables or expansion via macros.
+    t4copy copies files from one or more source directories to a target directory. The file content can be optionally transformed using an extensible set of key/value properties that match to placeholders in the file. Key/value properties can be command line options, environment variables, or defined in one or more C# scripts.
 
 OPTIONS
 
-	-a | --arg-pattern
+    --asm <path>
+    
+        Path to one or more assemblies that are included as references to the script compiler.
+        
+    -h, --help
+        
+        Display help content.                 
 
-		A regular expression that matches user provided variable expansions in template files. Defaults to a pattern that matches strings like $(<key>), where <key> is a capture group that extracts the variable name.
+    -o, --overwrite
+    
+        Instructs the utility to overwrite files that already exist. If this is not specified, the utility will terminate and display an error.
 
-	-e | --env-pattern <PATTERN>
+    -p, --prop <key=value>
+    
+        A key/value property pair to inject into the environment.
+        
+    --plan
+    
+        Instructs the utility to display what it will do, but not make any changes to the file system.       
 
-		A regular expression that matches environment variable expansions in template files. Defaults to a pattern that matches strings like $(env:<key>), where <key> is a capture group that extracts the environment variable name.
+    --script <source>
+    
+        Paths to one or more script files that define the values for more complex properties that are either dynamic or cannot be expressed on the command line.
+        
+    --symbol-pattern <pattern>
+    
+        A regular expression that defines the pattern the text engine uses to match placeholder symbols. If not specified, the engine uses pattern (\$\{(?<symbol>[a-zA-Z0-9_]+)\}) that matches ${PROPERTY} as a template placeholder. If you wish to override this behavior, ensure your pattern has a capturing group named 'symbol' defined, otherwise the engine will not be able to distinguish between the entire symbol to be replaced and the symbol name to match to property value.    
 
-	-l | --logger <LEVEL>
+    --tx <.extension[;.extension2...]>
+    
+        A semi-colon delimited list of file extensions that identify files that could have placeholders that can be transformed. Files that do not match the extensions listed in this option are simply copied. If you do not specify file extensions explicitly, then ALL FILES WILL BE TRANSFORMED, so be aware of what types of files you have in your template.
 
-		Logger verbosity level. Specify [v]erbose, [d]ebug, [[i]nfo]rmation, or [q]uiet - defaults to info.
+    -v, --verbosity <level>
+    
+        The verbosity level of the logger that displays status messages to the console. Levels could be (v)erbose, (d)ebug, ((i)nfo)rmation, ((w)arn)ing, (e)rror, or (f)atal. If not specified, the information level is used.
+        
+    -w, --warn-symbols
+    
+        Instructs the utility to display warnings for placeholders that do not have matching properties in any of the property providers.
+        
+ARGUMENTS
 
-	-m | --macro-pattern <PATTERN>
+    source
+    
+        The root path that contains artifacts to be copied to the target directory. Note the source directory itself is not created in the target directory, only the files and sub-directories. For instance, if the source directory is /templates/api and the target directory is /usr/src/api, the utility will not create a subdirectory in /usr/src/api called api. Instead it will generate/copy all files and directories from /template/api to /usr/src/api.
+        
+    destination
+    
+        The path where files and directories found in the source paths are copied to.
+        
+TRANSFORMATIONS
 
-		A regular expression that matches macro expansions in template files. Defaults to a pattern that matches strings like $(@<fn>(<arg>)), where <fn> and <arg> are named capture groups that extract the macro name and argument value, respectively.
+    The main purpose of the utility is to transform content files as they are being copied from one directory to another. It does this by identifying placeholders in the source files. By default, a placeholder is some text symbol that is wrapped in handlebars within the content of the file. For instance, if there is a file that has ${Project} within it, the utility will search for a property in the environment called 'Project' and replace it in the file with whatever the value is. Properties can be defined by command line parameters, environment variables, C# script files, and by inline expressions. Properties defined by command line parameters always take precedence over the other definition methods.
+    
+EXTENSIBILITY SCRIPTS
 
-	-o | --output <PATH>
-
-		The directory that serves as the root of the output.
-
-	--overwrite
-		
-		Overwrite files if they already exist. The process will display warnings for this.
-
-	-t | --template <PATH>
-
-		The path to the template structure.	
-
-	-v | --var <KEY=VALUE> [...]
-
-		Passes along a key/value pair to the process variables collection.
-		KEY   - The key to associate the variable value to
-		VALUE - The variable value
-		Example: t4copy -v threads=2 -v maxMemory=2GB -v path="Program Files"
-
-REMARKS
-
-	t4copy makes it easy to set up skeleton directory structures that are smarter than ctrl+c > ctrl+v. A typical scenario for using this tool is creating new dotnet projects that have a core set of dependencies, an established directory strucutre, source and unit test projects, and some boilerplate code. You could copy/paste a directory structure but what about naming the directories in the new folder? What about the boilerplate code being located in the correct namespaces for the project? This is what t4copy can solve.
-
-	To use t4copy, first create a template folder that contains the directory structure and files required for the template. Then modify the files, file names, and directory names with variables substitution templates. Then invoke the t4copy utility on the command line, specify the template directory, the target directory, and the variables values that will take the place of the substitution placeholders you have placed in the files. t4copy then copies the directory structure and processes the text files with your variable substitutions.
-
-	A simple example, consider the following directory structure with the following file names:
-
-	/templates/lib
-	   /$(project)
-	       $(project).csproj
-		   /$(@expandDotToPath($(project)))
-		      Class1.cs
-
-	Imagine Class1.cs has the following content:
-
-	using System;
-
-	namespace $(project)
-	{
-		public class Class1
-		{			
-		}
-	}
-
-	If we were to execute: t4copy -o /dev -t /templates/lib -v project=Vertical.CommandLine, we would get the following directory:
-
-	/dev
-	  /Vertical.CommandLine
-	     Vertical.CommandLine.csproj
-		 /Vertical
-		    /CommandLine
-			   Class1.cs
-
-	... and Class1.cs would read:
-
-	using System;
-
-	namespace Vertical.CommandLine
-	{
-		public class Class1
-		{
-		}
-	}
-
-	Have fun.
-
-BUILT-IN MACROS
-
-	The following macros come out-of-the-box with the installation of t4copy:
-
-		currentDirectory()
-			Returns the current working directory.
-
-		expandDotToPath(<ARG>)
-			Converts the given identifier <ARG> delimited by dots to a path. E.g. Vertical.TemplateCopy becomes Vertical/TemplateCopy.
-			
-		expandToPath(<ARG>)
-		    Converts the comma separated value <ARG> to a path. E.g. Vertical,TemplateCopy becomes Vertical/TemplateCopy.
-
-		machineName()
-			Returns the machine name.
-
-		now([FORMAT])
-			Returns the system date, optionally formatting the value using [format].
-
-		outputDirectory()
-			Returns the output directory specified in options.
-
-
-
-		specialFolder([FOLDER])
-			Returns the path to an environment special folder. See https://docs.microsoft.com/en-us/dotnet/api/system.environment.specialfolder?view=netframework-4.8 for values.
-
-		systemDirectory()
-			Returns the system directory.
-
-		targetContext()
-			Gets the current template context (path of the file or directory asset currently being copied).
-
-		templateContext()
-			Gets the current template context (path of the file or directory asset currently being copied).
-
-		templateDirectory()
-			Returns the template directory specified in options.
-
-		userDomainName()
-			Returns the current user network or domain ID.
-
-		userName()
-			Returns the current user name.
-
-		utcNow([FORMAT])
-			Returns the system date in UTC, optionally formatting the value using [format].
-			
+    An extensibility script is where more complex properties can be defined that require logic to be resolved. Simply put, an extensibility script is a file that contains a single C# class that has one or more public string properties defined. When resolving the values of property keys, t4copy will inspect this class for the property name and then dynamically invoke the code to retrieve the value. The namespace and class name are not important because the utility will reflect and use the first exported type. The only requirement here is the class and its constructor are public. Additionally, if the class in the script needs access to the properties passed by the command line, the constructor of the class can accept an IDictionary<string, string>. E.g.:
+    
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    
+    namespace T4Copy
+    {
+        public class Props
+        {
+            public Props(IDictionary<string, string> cliParameters)
+            {
+                // Pretend user passed -p "root=/usr/src";
+                SourceDirectory = Path.Combine(cliParameters["root"], "Vertical/TemplateCopy");
+            }
+            
+            public string SourceDirectory { get; }
+            public string Namespace => "Vertical.TemplateCopy";
+            public string CurrentUser => Environment.UserName;
+            public string Now => DateTime.Now.ToString();
+        }
+    }
+    
+    As of now, zero, one, ore more of the following parameters can be requested in the constructor of your class:
+    
+        IDictionary<string,string>            
+            Contains a set of key/value pairs that is a culmination of properties specified on the command line and the values of the options. Options values are as follows ({x} indicates a zero based index):
+                t4copy:source{x} - Source path argument
+                t4copy:target - Target path argument
+                t4copy:assemblyReference{x} - Assembly reference option (--asm)
+                t4copy:contentFileExtensions{x} - Content file extensions (--tx)
+                t4copy:verbosity - Logger verbosity (-v, --verbosity)
+                t4copy:plan - Plan option (--plan)
+                t4copy:overwrite - Overwrite option (--o, --overwrite)
+                t4copy:warn_symbols - Warn symbols option (-w, --warn-symbols)
+            
+        Action<string>
+            A delegate that connects to the logger. Strings passed to this delegate are logged to the console.

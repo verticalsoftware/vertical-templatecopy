@@ -4,6 +4,13 @@
 // MIT license. Please refer to LICENSE.txt in the root directory
 // or refer to https://opensource.org/licenses/MIT
 
-using System.Runtime.CompilerServices;
-
-[assembly: InternalsVisibleTo("Vertical.Tools.TemplateCopy.Tests")]
+namespace Vertical.Tools.TemplateCopy.Core
+{
+    /// <summary>
+    /// Defines the supported language types.
+    /// </summary>
+    public enum Language
+    {
+        CSharp
+    }
+}
