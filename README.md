@@ -89,22 +89,23 @@ The class you define in a script file lives as a singleton instance during the u
 
 You can access the properties specified on the command line by introducing a parameter of type `IDictionary<string, string>` into the class constructor. In turn, when t4copy creates an instance of your class, it will supply a case-sensitive dictionary that contains the key/value pairs of properties given by the -p or --prop option. Other command line option values that aren't properties defined by the -p or --prop option are also populated in the dictionary, and are prepended with t4copy_option:&lt;name&gt;, where &lt;name&gt; is the option identifier. The values provided are closely named with their command line option counterpart.
 
-Additionally, a `Action<string>` or `Action<int, string>` delegate can be requested that will dispatch string messages to the console logger. If used, the integer parameter specifies the logging level (0=verbose, 1=debug, 2=information, 3=warning, 4=error, 5=critical).
+Additionally, you can ask for a Serilog [ILogger](https://github.com/serilog/serilog/blob/dev/src/Serilog/ILogger.cs) in the event you wish to write trace/debug information to the console.
 
 For example, to have access to the properties dictionary and the logging delegate, your class may look like this:
 
 ```csharp
 using System;
 using System.Collections.Generic;
+using Serilog;
 
 namespace T4Copy 
 {
     public class Props 
     {
-        public Props(IDictionary<string, string> properties, Action<int,string> log)
+        public Props(IDictionary<string, string> properties, ILogger logger)
         {
             var myValue = properties["value"];
-            log(2, "Received the logging delegate.");
+            logger.Information("Received {count} properties from t4copy!", properties.Count);
         }
     }
 }

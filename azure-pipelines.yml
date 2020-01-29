@@ -4,7 +4,7 @@
 # https://aka.ms/yaml
 
 trigger:
-- master
+- master Dev
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -14,10 +14,12 @@ variables:
   projectPath: 'src/Vertical.Tools.TemplateCopy.csproj'  
 
 steps:
-- task: DotNetCoreInstaller@0
+- task: UseDotNet@2
   displayName: 'Use .NET Core SDK 3.1'
   inputs:
+    packageType: sdk
     version: 3.1.101
+    installationPath: $(Agent.ToolsDirectory)/dotnet
 
 - task: DotNetCoreCLI@2
   displayName: 'dotnet build'
