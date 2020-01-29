@@ -156,8 +156,7 @@ namespace Vertical.Tools.TemplateCopy.Providers
         private IDictionary<Type, object> Injectables => new Dictionary<Type, object>
         {
             [typeof(IDictionary<string,string>)] = _options.Values.AsDictionary(),
-            [typeof(Action<string, object[]>)] = new Action<string, object[]>((m,v) => _logger.Log(2,m,v)),
-            [typeof(Action<int,string,object[]>)] = new Action<int,string,object[]>((l,m,v) => _logger.Log(l,m,v))
+            [typeof(ILogger)] = _logger
         };
     }
 }

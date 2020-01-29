@@ -2,6 +2,7 @@ using System.IO;
 using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
 using System.IO.Compression;
+using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Vertical.Tools.TemplateCopy.Core;
@@ -74,12 +75,17 @@ namespace Vertical.Tools.TemplateCopy.Tasks
 
         private static void LoadNetCoreAssemblies(IFileSystem fileSystem)
         {
-            var location = Path.GetDirectoryName(typeof(object).Assembly.Location);
-            fileSystem.Directory.CreateDirectory(location);
+            var coreAssemblyPath = Path.GetDirectoryName(typeof(object).Assembly.Location);
             
-            foreach (var assembly in CSharpCompiler.CoreAssemblies)
+            foreach (var assembly in CSharpCompiler.CoreAssemblies.Concat(CSharpCompiler.AncillaryAssemblies))
             {
-                var path = Path.Combine(location, assembly);
+                var path = Path.IsPathRooted(assembly)
+                    ? assembly
+                    : Path.Combine(coreAssemblyPath, assembly);
+
+                var directory = Path.GetDirectoryName(path);
+
+                fileSystem.Directory.CreateDirectory(directory);
                 fileSystem.File.WriteAllBytes(path, File.ReadAllBytes(path));
             }
         }

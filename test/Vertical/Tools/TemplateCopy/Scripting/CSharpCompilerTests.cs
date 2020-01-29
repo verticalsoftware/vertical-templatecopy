@@ -33,6 +33,8 @@ namespace Vertical.Tools.TemplateCopy.Scripting
                 using System;
                 using System.Collections.Generic;
                 using System.Linq;
+                using Serilog;
+
                 namespace _Test {{
                     public class Props 
                     {{

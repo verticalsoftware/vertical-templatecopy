@@ -43,6 +43,11 @@ namespace Vertical.Tools.TemplateCopy.Scripting
             "System.Xml.dll",
             "System.Private.CoreLib.dll"
         };
+
+        internal static readonly string[] AncillaryAssemblies =
+        {
+            typeof(ILogger).Assembly.Location
+        };
         
         private readonly IOptionsProvider _options;
         private readonly ILogger _logger;
@@ -75,7 +80,7 @@ namespace Vertical.Tools.TemplateCopy.Scripting
             _logger = logger;
             _assemblyResolver = assemblyResolver;
             _fileSystemAdapter = fileSystemAdapter;
-            _lazyMetadataReferences = new Lazy<IList<MetadataReference>>(BuildCoreReferences);
+            _lazyMetadataReferences = new Lazy<IList<MetadataReference>>(BuildReferences);
         }
 
         /// <inheritdoc />
@@ -117,11 +122,13 @@ namespace Vertical.Tools.TemplateCopy.Scripting
             throw new AggregateException(exceptions);
         }
 
-        private IList<MetadataReference> BuildCoreReferences()
+        private IList<MetadataReference> BuildReferences()
         {
             using var _ = _logger.Indent(LogEventLevel.Verbose, "Building core metadata references");
 
-            var coreAssemblyPaths = CoreAssemblies.Select(path => _assemblyResolver.GetAssemblyPath(path));
+            var coreAssemblyPaths = CoreAssemblies
+                .Concat(AncillaryAssemblies)
+                .Select(path => _assemblyResolver.GetAssemblyPath(path));
             
             var userAssemblyPaths = _options
                 .AssemblyReferences
